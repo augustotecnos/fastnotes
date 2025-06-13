@@ -1,0 +1,14 @@
+body{margin:0;font-family:sans-serif}
+#fab-add{
+  position:fixed;right:2rem;bottom:2rem;
+  width:56px;height:56px;border-radius:50%;
+  font-size:2rem;border:none;background:#007bff;color:#fff
+}
+.grid-stack-item-content{
+  background:#fff;border:2px solid #00000020;border-radius:8px;
+  display:flex;flex-direction:column;padding:.5rem
+}
+.grid-stack-item-content h6{margin:0 0 .25rem;font-size:1rem}
+.grid-stack-item-content textarea{
+  flex:1;border:none;resize:none;font:inherit
+}
