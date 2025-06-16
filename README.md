@@ -42,3 +42,12 @@ if ("serviceWorker" in navigator) {
 </script>
 ```
 
+## Loading GridStack
+
+Add GridStack from its CDN build:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/gridstack@9.3.0/dist/gridstack-all.js"></script>
+```
+
+`app.js` accesses `window.GridStack` directly—this build exposes a global variable only, so there is no ES module to import.
