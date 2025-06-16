@@ -32,3 +32,10 @@ function restore(){
   }
 }
 restore();
+
+// Register service worker for offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/src/js/service-worker.js');
+  });
+}
