@@ -1,6 +1,10 @@
-const { GridStack } = window;
+import { GridStack } from 'gridstack';
+import * as Store from './store.js';
 
-const grid = GridStack.init({ column:12, float:false, resizable:{handles:'e, se, s, w'} }, '#grid');
+const grid = GridStack.init(
+  { column: 12, float: false, resizable: { handles: 'e, se, s, w' } },
+  '#grid'
+);
 grid.on('change', saveLayout);
 
 document.getElementById('fab-add').addEventListener('click', addCard);
@@ -16,18 +20,20 @@ function addCard(data={x:0,y:0,w:3,h:2,title:'Título',text:''}){
   saveLayout();
 }
 
-function saveLayout(){
-  localStorage.setItem('layout', JSON.stringify(grid.save(true)));
+function saveLayout() {
+  Store.data.layout = grid.save(true);
+  Store.save();
 }
-function restore(){
-  const raw=localStorage.getItem('layout');
-  if(raw){
-    grid.load(JSON.parse(raw)).forEach(w=>{
-      // re-bind events se precisar
-    });
-  }else{
+
+async function restore() {
+  await Store.load();
+  if (Store.data.layout && Store.data.layout.length) {
+    grid.load(Store.data.layout).forEach(() => {});
+  } else {
     // primeiro uso: 3 cards demo
-    addCard({x:0,y:0}); addCard({x:3,y:0}); addCard({x:6,y:0});
+    addCard({ x: 0, y: 0 });
+    addCard({ x: 3, y: 0 });
+    addCard({ x: 6, y: 0 });
   }
 }
 restore();
