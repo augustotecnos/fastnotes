@@ -21,6 +21,12 @@ export function upsert(item) {
   return item.id;
 }
 
+export function patch(id, changes) {
+  if (!data.items[id]) return;
+  Object.assign(data.items[id], changes);
+  save();
+}
+
 export function remove(id) {
   delete data.items[id];
   save();
