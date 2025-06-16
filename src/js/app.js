@@ -1,6 +1,7 @@
 import { GridStack } from 'gridstack';
 import * as Store from './store.js';
 import { create as createCard } from './ui/card.js';
+import { create as createFolder } from './ui/folder.js';
 
 const grid = GridStack.init(
   { column: 12, float: false, resizable: { handles: 'e, se, s, w' } },
@@ -8,10 +9,27 @@ const grid = GridStack.init(
 );
 grid.on('change', saveLayout);
 
-document.getElementById('fab-add').addEventListener('click', addCard);
+const fabAdd = document.getElementById('fab-add');
+const fabMenu = document.getElementById('fab-menu');
+document.getElementById('fab-add-card').addEventListener('click', () => { fabMenu.classList.remove('show'); addCard(); });
+document.getElementById('fab-add-folder').addEventListener('click', () => { fabMenu.classList.remove('show'); addFolder(); });
+fabAdd.addEventListener('click', () => {
+  fabMenu.classList.toggle('show');
+});
+document.addEventListener('click', e => {
+  if (!fabAdd.contains(e.target) && !fabMenu.contains(e.target)) {
+    fabMenu.classList.remove('show');
+  }
+});
 
 function addCard(data={x:0,y:0,w:3,h:2}){
   const el = createCard({});
+  grid.addWidget(el,data);
+  saveLayout();
+}
+
+function addFolder(data={x:0,y:0,w:3,h:3}){
+  const el = createFolder({});
   grid.addWidget(el,data);
   saveLayout();
 }
@@ -26,7 +44,10 @@ async function restore() {
   if (Store.data.layout && Store.data.layout.length) {
     grid.removeAll();
     Store.data.layout.forEach(opts => {
-      const el = createCard(Store.data.items[opts.id] || {});
+      const item = Store.data.items[opts.id] || {};
+      let el;
+      if (item.type === 'folder') el = createFolder(item);
+      else el = createCard(item);
       grid.addWidget(el, opts);
     });
   } else {
