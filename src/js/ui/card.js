@@ -43,7 +43,8 @@ export function create(data = {}) {
     Store.patch(id, { color: colorEl.value });
   });
   lockBtn.addEventListener('click', () => {
-    setLock(!wrapper.dataset.locked);
+    const locked = wrapper.dataset.locked === 'true';
+    setLock(!locked);
     Store.patch(id, { locked: wrapper.dataset.locked === 'true' });
   });
   content.querySelector('button.copy').addEventListener('click', () => {
