@@ -13,11 +13,11 @@ export function create(data = {}) {
   const wrapper = document.createElement('div');
   wrapper.setAttribute('gs-id', id);
   wrapper.innerHTML = `
-    <div class="grid-stack-item-content card">
+    <div class="grid-stack-item-content card" tabindex="0" role="listitem" aria-label="Note card">
       <div class="card-actions">
         <button class="lock" aria-label="Lock">🔒</button>
         <button class="copy" aria-label="Copy">📄</button>
-        <input class="color" type="color" value="${item.color}">
+        <input class="color" type="color" aria-label="Color" value="${item.color}">
       </div>
       <h6 contenteditable="true" spellcheck="false"></h6>
       <textarea></textarea>
