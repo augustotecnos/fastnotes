@@ -1,9 +1,21 @@
 body{margin:0;font-family:sans-serif}
-#fab-add{
+#fab{
   position:fixed;right:2rem;bottom:2rem;
-  width:56px;height:56px;border-radius:50%;
-  font-size:2rem;border:none;background:#007bff;color:#fff
+  width:56px;height:56px
 }
+#fab button{
+  position:absolute;top:0;left:0;width:56px;height:56px;border-radius:50%;
+  font-size:2rem;border:none;background:#007bff;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+}
+#fab .fab-option{
+  opacity:0;pointer-events:none;transition:transform .25s,opacity .25s;
+  transform:translate(0,0) scale(0);
+}
+#fab.open .fab-option{opacity:1;pointer-events:auto}
+#fab.open #fab-card{transform:translate(-70px,0) scale(1)}
+#fab.open #fab-container{transform:translate(-50px,-50px) scale(1)}
+#fab.open #fab-folder{transform:translate(0,-70px) scale(1)}
 .grid-stack-item-content{
   background:#fff;border:2px solid #00000020;border-radius:8px;
   display:flex;flex-direction:column;padding:.5rem
