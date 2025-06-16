@@ -23,24 +23,22 @@ npm run dev
 
 ## Build
 
-Create a production build in the `dist` folder:
+Create a production build with PWA assets in the `dist` folder:
 
 ```bash
 npm run build
 ```
 
-## Enabling the service worker
+To preview the production build locally:
 
-The service worker located at `src/js/service-worker.js` enables offline support.
-Register it from your application entry or add the snippet below to `index.html`:
-
-```html
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/src/js/service-worker.js");
-}
-</script>
+```bash
+npm run preview
 ```
+
+## PWA Support
+
+`vite-plugin-pwa` injects the service worker and manifest automatically.
+Offline support is enabled by default and registered from `app.js`.
 
 ## Loading GridStack
 
