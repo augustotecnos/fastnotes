@@ -1,5 +1,4 @@
-import { GridStack } from
-  'https://cdn.jsdelivr.net/npm/gridstack@9.3.0/dist/gridstack-all.js';
+const { GridStack } = window;
 
 const grid = GridStack.init({ column:12, float:false, resizable:{handles:'e, se, s, w'} }, '#grid');
 grid.on('change', saveLayout);
