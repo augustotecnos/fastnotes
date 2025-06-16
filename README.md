@@ -42,3 +42,7 @@ if ("serviceWorker" in navigator) {
 </script>
 ```
 
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
