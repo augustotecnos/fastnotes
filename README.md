@@ -21,13 +21,18 @@ Start a local server with live reloading:
 npm run dev
 ```
 
-## Build
+## Build & Deploy
 
 Create a production build in the `dist` folder:
 
 ```bash
 npm run build
 ```
+
+Copy the contents of `dist/` to a static host such as GitHub Pages or Netlify.
+If the app is served from a subpath (for example
+`https://username.github.io/fastnotes/`), add
+`<base href="/fastnotes/">` inside `index.html` so asset paths resolve.
 
 ## Enabling the service worker
 
