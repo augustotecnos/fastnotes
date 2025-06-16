@@ -12,3 +12,7 @@ body{margin:0;font-family:sans-serif}
 .grid-stack-item-content textarea{
   flex:1;border:none;resize:none;font:inherit
 }
+.card-actions{
+  display:flex;gap:.25rem;justify-content:flex-end;margin-bottom:.25rem
+}
+.card-actions button{background:none;border:none;cursor:pointer}
