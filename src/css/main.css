@@ -1,4 +1,6 @@
 body{margin:0;font-family:sans-serif}
+#menu{position:fixed;left:1rem;top:1rem;display:flex;gap:.5rem}
+#menu button{border:none;background:#eee;padding:.25rem .5rem;border-radius:4px;cursor:pointer}
 #fab-add{
   position:fixed;right:2rem;bottom:2rem;
   width:56px;height:56px;border-radius:50%;
