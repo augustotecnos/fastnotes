@@ -1,6 +1,7 @@
 import { GridStack } from 'gridstack';
 import * as Store from './store.js';
 import { create as createCard } from './ui/card.js';
+import { create as createContainer } from './ui/container.js';
 
 const grid = GridStack.init(
   { column: 12, float: false, resizable: { handles: 'e, se, s, w' } },
@@ -8,11 +9,34 @@ const grid = GridStack.init(
 );
 grid.on('change', saveLayout);
 
-document.getElementById('fab-add').addEventListener('click', addCard);
+const fabMenu = document.getElementById('fab-menu');
+document.getElementById('fab-add').addEventListener('click', () => {
+  fabMenu.hidden = !fabMenu.hidden;
+  fabMenu.classList.toggle('show');
+});
+document.getElementById('fab-card').addEventListener('click', () => {
+  addCard();
+  closeMenu();
+});
+document.getElementById('fab-container').addEventListener('click', () => {
+  addContainer();
+  closeMenu();
+});
+
+function closeMenu() {
+  fabMenu.hidden = true;
+  fabMenu.classList.remove('show');
+}
 
 function addCard(data={x:0,y:0,w:3,h:2}){
   const el = createCard({});
   grid.addWidget(el,data);
+  saveLayout();
+}
+
+function addContainer(data={x:0,y:0,w:3,h:2}){
+  const el = createContainer({});
+  grid.addWidget(el, data);
   saveLayout();
 }
 
@@ -26,7 +50,10 @@ async function restore() {
   if (Store.data.layout && Store.data.layout.length) {
     grid.removeAll();
     Store.data.layout.forEach(opts => {
-      const el = createCard(Store.data.items[opts.id] || {});
+      const data = Store.data.items[opts.id] || {};
+      let el;
+      if (data.type === 'container') el = createContainer(data);
+      else el = createCard(data);
       grid.addWidget(el, opts);
     });
   } else {

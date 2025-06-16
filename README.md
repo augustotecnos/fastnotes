@@ -52,3 +52,10 @@ GridStack is installed via npm and imported as an ES module from `app.js`.
 2. Clique no botão **+** para adicionar um novo card.
 3. Edite o título e o texto. Altere a cor e teste o bloqueio/copiar.
 4. Recarregue a página e confirme que o conteúdo persiste.
+
+### Passo de teste 4.4
+
+1. Execute `npm run dev` e abra `http://localhost:5173`.
+2. Clique no **+** e escolha **Container**.
+3. Use a seta para recolher e expandir. Arraste o container pelo grid.
+4. Recarregue a página e confirme que o container continua no lugar.
