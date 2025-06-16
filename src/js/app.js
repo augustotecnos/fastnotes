@@ -1,6 +1,7 @@
 import { GridStack } from 'gridstack';
 import * as Store from './store.js';
 import { create as createCard } from './ui/card.js';
+import { t, getLanguage } from './i18n.js';
 
 const grid = GridStack.init(
   { column: 12, float: false, resizable: { handles: 'e, se, s, w' } },
@@ -8,7 +9,10 @@ const grid = GridStack.init(
 );
 grid.on('change', saveLayout);
 
-document.getElementById('fab-add').addEventListener('click', addCard);
+document.documentElement.lang = getLanguage();
+const addBtn = document.getElementById('fab-add');
+addBtn.setAttribute('aria-label', t('add'));
+addBtn.addEventListener('click', addCard);
 
 function addCard(data={x:0,y:0,w:3,h:2}){
   const el = createCard({});

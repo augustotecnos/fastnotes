@@ -1,9 +1,10 @@
 import * as Store from '../store.js';
+import { t } from '../i18n.js';
 
 export function create(data = {}) {
   const item = {
     type: 'card',
-    title: data.title || 'Título',
+    title: data.title || t('titleDefault'),
     text: data.text || '',
     color: data.color || '#77d6ec',
     locked: data.locked || false,
@@ -15,8 +16,8 @@ export function create(data = {}) {
   wrapper.innerHTML = `
     <div class="grid-stack-item-content card">
       <div class="card-actions">
-        <button class="lock" aria-label="Lock">🔒</button>
-        <button class="copy" aria-label="Copy">📄</button>
+        <button class="lock">🔒</button>
+        <button class="copy">📄</button>
         <input class="color" type="color" value="${item.color}">
       </div>
       <h6 contenteditable="true" spellcheck="false"></h6>
@@ -27,8 +28,11 @@ export function create(data = {}) {
   const textEl = content.querySelector('textarea');
   const colorEl = content.querySelector('input.color');
   const lockBtn = content.querySelector('button.lock');
+  const copyBtn = content.querySelector('button.copy');
   titleEl.textContent = item.title;
   textEl.value = item.text;
+  lockBtn.setAttribute('aria-label', t('lock'));
+  copyBtn.setAttribute('aria-label', t('copy'));
   applyColor(item.color);
   setLock(item.locked);
 
@@ -59,6 +63,7 @@ export function create(data = {}) {
     titleEl.contentEditable = !flag;
     textEl.readOnly = flag;
     lockBtn.textContent = flag ? '🔓' : '🔒';
+    lockBtn.setAttribute('aria-label', flag ? t('unlock') : t('lock'));
   }
 
   return wrapper;
