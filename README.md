@@ -52,3 +52,10 @@ GridStack is installed via npm and imported as an ES module from `app.js`.
 2. Clique no botão **+** para adicionar um novo card.
 3. Edite o título e o texto. Altere a cor e teste o bloqueio/copiar.
 4. Recarregue a página e confirme que o conteúdo persiste.
+
+### Passo de teste 4.9
+
+1. Clique em **Login** e autorize o acesso ao Google Drive.
+2. Edite ou crie cards e aguarde alguns segundos.
+3. Atualize a página e verifique se o botão exibe **Logout**.
+4. Os dados devem ter sido sincronizados com o arquivo `fastnotes-backup.json` na pasta AppData do Drive.
