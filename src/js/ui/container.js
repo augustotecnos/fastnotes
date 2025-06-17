@@ -47,10 +47,15 @@ export function create(data = {}) {
     if (width < 600) cols = 3;
     else if (width < 1024) cols = 6;
     if (subgrid.opts.column !== cols) subgrid.column(cols);
+    adjustHeight();
   }
   const ro = new ResizeObserver(updateColumns);
   ro.observe(subEl);
-  updateColumns();
+  setTimeout(() => {
+    updateColumns();
+    restoreChildren();
+    adjustHeight();
+  });
   subgrid.on('change', () => {
     item.layout = subgrid.save();
     Store.patch(id, { layout: item.layout });
@@ -67,23 +72,24 @@ export function create(data = {}) {
     Store.remove(id);
   });
 
-  // restore children
-  if (item.layout.length) {
-    subgrid.removeAll();
-    item.layout.forEach(opts => {
-      const child = Store.data.items[opts.id];
-      if (!child) return;
-      let el;
-      if (child.type === 'card') el = createCard(child);
-      if (el) subgrid.addWidget(el, opts);
-    });
-  } else if (item.children.length) {
-    item.children.forEach(cid => {
-      const child = Store.data.items[cid];
-      if (!child) return;
-      const el = createCard(child);
-      subgrid.addWidget(el, { x: 0, y: 0, w: 3, h: 2 });
-    });
+  function restoreChildren() {
+    if (item.layout.length) {
+      subgrid.removeAll();
+      item.layout.forEach(opts => {
+        const child = Store.data.items[opts.id];
+        if (!child) return;
+        let el;
+        if (child.type === 'card') el = createCard(child);
+        if (el) subgrid.addWidget(el, opts);
+      });
+    } else if (item.children.length) {
+      item.children.forEach(cid => {
+        const child = Store.data.items[cid];
+        if (!child) return;
+        const el = createCard(child);
+        subgrid.addWidget(el, { x: 0, y: 0, w: 3, h: 2 });
+      });
+    }
   }
 
   function setCollapsed(flag) {
@@ -93,7 +99,7 @@ export function create(data = {}) {
     item.collapsed = flag;
     content.classList.toggle('collapsed', flag);
     Store.patch(id, { collapsed: flag });
-    adjustHeight();
+    setTimeout(adjustHeight, 300);
   }
 
   toggleBtn.addEventListener('click', () => setCollapsed(!item.collapsed));
