@@ -40,12 +40,18 @@ export function create(data = {}) {
     Store.patch(id, { title: titleEl.textContent });
   });
 
-  const subgrid = GridStack.init({ column: 12, float: false, acceptWidgets: true, dragOut: true }, subEl);
+  const subgrid = GridStack.init({
+    column: 12,
+    float: false,
+    acceptWidgets: true,
+    dragOut: true,
+    subGrid: true
+  }, subEl);
   function updateColumns() {
     const width = subEl.clientWidth;
-    let cols = 12;
-    if (width < 600) cols = 3;
-    else if (width < 1024) cols = 6;
+    let cols = Math.floor(width / 150);
+    if (cols < 1) cols = 1;
+    if (cols > 12) cols = 12;
     if (subgrid.opts.column !== cols) subgrid.column(cols);
     adjustHeight();
   }
@@ -113,8 +119,8 @@ export function create(data = {}) {
     parentGrid.save();
   }
 
+  // initialize state after caller inserts element into the grid
   setCollapsed(item.collapsed);
-  setTimeout(adjustHeight);
 
-  return { el: wrapper, grid: subgrid };
+  return { el: wrapper, grid: subgrid, adjust: adjustHeight, setCollapsed };
 }

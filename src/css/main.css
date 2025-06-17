@@ -49,8 +49,15 @@ body{margin:0;font-family:sans-serif}
 .container .collapse__body::-webkit-scrollbar{width:8px}
 .container .collapse__body::-webkit-scrollbar-thumb{background:#007bff;border-radius:4px}
 .container .subgrid{min-height:100px}
-.container.collapsed{min-height:100px;overflow:hidden}
+.container.collapsed{min-height:100px;height:100px;overflow:hidden;position:relative}
 .container.collapsed .collapse__body{display:none}
+.container.collapsed::after{
+  content:'\1f512';
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:2rem;opacity:.6;background:rgba(0,0,0,.05);
+  animation:fadeIn .3s;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:.6}}
 
 
 #fab-menu{
