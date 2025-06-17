@@ -1,14 +1,48 @@
 import { GridStack } from 'gridstack';
 import * as Store from './store.js';
 import { create as createCard } from './ui/card.js';
+
 import * as Auth from './drive/auth.js';
 import * as Drive from './drive/sync.js';
+
+import { t, getLanguage } from './i18n.js';
+
 
 const grid = GridStack.init(
   { column: 12, float: false, resizable: { handles: 'e, se, s, w' } },
   '#grid'
 );
 grid.on('change', saveLayout);
+
+
+function updateColumns() {
+  const width = window.innerWidth;
+  let cols = 12;
+  if (width < 600) cols = 3;
+  else if (width < 1024) cols = 6;
+  if (grid.opts.column !== cols) grid.column(cols);
+}
+window.addEventListener('resize', updateColumns);
+updateColumns();
+
+document.addEventListener('keydown', navigateCards);
+
+function navigateCards(e){
+  const cards = Array.from(document.querySelectorAll('.grid-stack-item-content'));
+  const idx = cards.indexOf(document.activeElement);
+  if (idx === -1) return;
+  if (['ArrowRight','ArrowDown'].includes(e.key)){
+    const next = cards[idx+1];
+    if (next){ next.focus(); e.preventDefault(); }
+  } else if (['ArrowLeft','ArrowUp'].includes(e.key)){
+    const prev = cards[idx-1];
+    if (prev){ prev.focus(); e.preventDefault(); }
+  } else if (e.key === 'Enter'){
+    const first = document.activeElement.querySelector('h6[contenteditable]') ||
+                  document.activeElement.querySelector('textarea');
+    if (first){ first.focus(); e.preventDefault(); }
+  }
+}
 
 document.getElementById('fab-add').addEventListener('click', addCard);
 const authBtn = document.getElementById('auth-btn');
