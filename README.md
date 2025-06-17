@@ -21,13 +21,18 @@ Start a local server with live reloading:
 npm run dev
 ```
 
-## Build
+## Build & Deploy
 
 Create a production build in the `dist` folder:
 
 ```bash
 npm run build
 ```
+
+Copy the contents of `dist/` to a static host such as GitHub Pages or Netlify.
+If the app is served from a subpath (for example
+`https://username.github.io/fastnotes/`), add
+`<base href="/fastnotes/">` inside `index.html` so asset paths resolve.
 
 ## Enabling the service worker
 
@@ -52,3 +57,19 @@ GridStack is installed via npm and imported as an ES module from `app.js`.
 2. Clique no botão **+** para adicionar um novo card.
 3. Edite o título e o texto. Altere a cor e teste o bloqueio/copiar.
 4. Recarregue a página e confirme que o conteúdo persiste.
+
+## Switching languages
+
+The interface defaults to the browser language and supports English (`en`) and Portuguese (`pt`).
+To override the detected language, set the `lang` key in `localStorage` and reload:
+
+```js
+localStorage.setItem('lang', 'en');
+location.reload();
+```
+
+You can also change it at runtime from the console:
+
+```js
+i18n.setLanguage('pt');
+```

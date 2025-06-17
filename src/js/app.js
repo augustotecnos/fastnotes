@@ -1,12 +1,14 @@
 import { GridStack } from 'gridstack';
 import * as Store from './store.js';
 import { create as createCard } from './ui/card.js';
+import { t, getLanguage } from './i18n.js';
 
 const grid = GridStack.init(
   { column: 12, float: false, resizable: { handles: 'e, se, s, w' } },
   '#grid'
 );
 grid.on('change', saveLayout);
+
 
 function updateColumns() {
   const width = window.innerWidth;
