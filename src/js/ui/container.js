@@ -2,10 +2,17 @@ import { GridStack } from "gridstack";
 import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
 
+import { t } from "../i18n.js";
+
+
 export function create(data = {}) {
   const item = {
     type: "container",
+
+    title: data.title || t("containerDefault"),
+
     title: data.title || "Container",
+
     children: data.children || [],
     layout: data.layout || [],
     collapsed: data.collapsed || false,
@@ -35,6 +42,11 @@ export function create(data = {}) {
   const delBtn = content.querySelector("button.delete");
   const bodyEl = content.querySelector(".collapse__body");
   const subEl = content.querySelector(".subgrid");
+
+  toggleBtn.setAttribute("aria-label", t("toggle"));
+  addBtn.setAttribute("aria-label", t("addCard"));
+  delBtn.setAttribute("aria-label", t("delete"));
+
   titleEl.textContent = item.title;
   titleEl.addEventListener("input", () => {
     Store.patch(id, { title: titleEl.textContent });

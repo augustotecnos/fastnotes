@@ -109,3 +109,7 @@ You can also change it at runtime from the console:
 ```js
 i18n.setLanguage("pt");
 ```
+
+
+Container buttons and the default container title now use translation keys.
+
