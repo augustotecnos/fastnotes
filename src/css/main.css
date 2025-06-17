@@ -33,6 +33,9 @@ body{margin:0;font-family:sans-serif}
 .grid-stack-item-content textarea{
   flex:1;border:none;resize:none;font:inherit
 }
+.grid-stack-item-content[data-locked="true"] textarea{
+  background:#f0f0f0;
+}
 .card-actions{
   display:flex;gap:.25rem;justify-content:flex-end;margin-bottom:.25rem
 }
@@ -90,6 +93,7 @@ body{margin:0;font-family:sans-serif}
   body{background:#121212;color:#fff}
   #fab{background:#0d6efd}
   .grid-stack-item-content{background:#1e1e1e;border-color:#ffffff33}
+  .grid-stack-item-content[data-locked="true"] textarea{background:#333}
 }
 
 

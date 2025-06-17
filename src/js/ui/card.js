@@ -46,10 +46,12 @@ export function create(data = {}) {
   textEl.addEventListener('input', () => {
     Store.patch(id, { text: textEl.value });
   });
-  colorEl.addEventListener('input', () => {
+  function onColorChange() {
     applyColor(colorEl.value);
     Store.patch(id, { color: colorEl.value });
-  });
+  }
+  colorEl.addEventListener('input', onColorChange);
+  colorEl.addEventListener('change', onColorChange);
   lockBtn.addEventListener('click', () => {
     const locked = wrapper.dataset.locked === 'true';
     setLock(!locked);
@@ -72,6 +74,7 @@ export function create(data = {}) {
     wrapper.dataset.locked = flag;
     titleEl.contentEditable = !flag;
     textEl.readOnly = flag;
+    textEl.style.opacity = flag ? '0.6' : '';
     lockBtn.textContent = flag ? '🔓' : '🔒';
     lockBtn.setAttribute('aria-label', flag ? t('unlock') : t('lock'));
   }

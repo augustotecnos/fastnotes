@@ -20,6 +20,7 @@ export function create(data = {}) {
   icon.addEventListener('click', openFolder);
 
   function openFolder() {
+    if (document.querySelector('.folder-overlay')) return;
     const overlay = document.createElement('div');
     overlay.className = 'folder-overlay';
     overlay.innerHTML = `
@@ -44,7 +45,8 @@ export function create(data = {}) {
       item.desc = descEl.value;
       Store.patch(id, { desc: item.desc });
     });
-    const childGrid = GridStack.init({ column: 12, float: false, resizable:{ handles:'e, se, s, w' }, acceptWidgets: true }, gridEl);
+    const childGrid = GridStack.init({ column: 12, float: false, resizable:{ handles:'e, se, s, w' }, acceptWidgets: true, dragOut: true }, gridEl);
+    if (!childGrid) return;
 
     if (item.layout && item.layout.length) {
       item.layout.forEach(opts => {
