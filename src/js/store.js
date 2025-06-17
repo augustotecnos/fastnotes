@@ -38,6 +38,15 @@ export function patch(id, changes) {
 }
 
 export function remove(id) {
+  const item = data.items[id];
+  if (!item) return;
+  const parentId = item.parent || 'root';
+  if (parentId !== 'root') {
+    const p = data.items[parentId];
+    if (p && Array.isArray(p.children)) {
+      p.children = p.children.filter(cid => cid !== id);
+    }
+  }
   delete data.items[id];
   save();
 }
