@@ -29,7 +29,6 @@ Create a production build with PWA assets in the `dist` folder:
 npm run build
 ```
 
-
 To preview the production build locally:
 Copy the contents of `dist/` to a static host such as GitHub Pages or Netlify.
 If the app is served from a subpath (for example
@@ -42,7 +41,6 @@ If the app is served from a subpath (for example
 npm run preview
 ```
 
-
 ## PWA Support
 
 `vite-plugin-pwa` injects the service worker and manifest automatically.
@@ -50,11 +48,9 @@ Offline support is enabled by default and registered from `app.js`.
 
 =======
 
-
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
-=======
+# This project is licensed under the [MIT License](LICENSE).
 
 ## Loading GridStack
 
@@ -67,14 +63,12 @@ GridStack is installed via npm and imported as an ES module from `app.js`.
 3. Edite o título e o texto. Altere a cor e teste o bloqueio/copiar.
 4. Recarregue a página e confirme que o conteúdo persiste.
 
-
 ### Passo de teste 4.4
 
 1. Execute `npm run dev` e abra `http://localhost:5173`.
 2. Clique no **+** e escolha **Container**.
 3. Use a seta para recolher e expandir. Arraste o container pelo grid.
 4. Recarregue a página e confirme que o container continua no lugar.
-
 
 ### Passo de teste 4.5
 
@@ -92,7 +86,6 @@ terminado em `.fastnotes.json` será baixado contendo todos os dados.
 Para restaurar, clique em **Import** e escolha um arquivo exportado
 anteriormente. A página será recarregada com o conteúdo importado.
 
-
 ### Passo de teste 4.9
 
 1. Clique em **Login** e autorize o acesso ao Google Drive.
@@ -106,16 +99,14 @@ The interface defaults to the browser language and supports English (`en`) and P
 To override the detected language, set the `lang` key in `localStorage` and reload:
 
 ```js
-localStorage.setItem('lang', 'en');
+localStorage.setItem("lang", "en");
 location.reload();
 ```
 
 You can also change it at runtime from the console:
 
 ```js
-i18n.setLanguage('pt');
+i18n.setLanguage("pt");
 ```
 
-
-
-
+Container buttons and the default container title now use translation keys.
