@@ -36,7 +36,7 @@ export function create(data = {}) {
     Store.patch(id, { title: titleEl.textContent });
   });
 
-  const subgrid = GridStack.init({ column: 12, float: false, acceptWidgets: true }, subEl);
+  const subgrid = GridStack.init({ column: 12, float: false, acceptWidgets: true, dragOut: true }, subEl);
   subgrid.on('change', () => {
     item.layout = subgrid.save();
     Store.patch(id, { layout: item.layout });

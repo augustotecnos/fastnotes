@@ -27,7 +27,7 @@ function attachGridEvents(g) {
 }
 
 const grid = GridStack.init(
-  { column: 12, float: false, resizable: { handles: 'e, se, s, w' }, acceptWidgets: true },
+  { column: 12, float: false, resizable: { handles: 'e, se, s, w' }, acceptWidgets: true, dragOut: true },
   '#grid'
 );
 grid.on('change', saveLayout);
@@ -156,7 +156,7 @@ async function restore() {
         grid.addWidget(el, opts);
       }
     });
-  } else {
+  } else if (!localStorage.getItem('fastnotes-json')) {
     addCard({ x: 0, y: 0 });
     addCard({ x: 3, y: 0 });
     addCard({ x: 6, y: 0 });
