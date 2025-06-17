@@ -53,7 +53,7 @@ export function create(data = {}) {
     const cellW = parentGrid.cellWidth();
     const width = subEl.clientWidth;
     let cols = Math.round(width / cellW);
-    if (cols < 1) cols = 1;
+    if (cols < 3) cols = 3;
     if (cols > 12) cols = 12;
     if (subgrid.opts.column !== cols) subgrid.column(cols);
     adjustHeight();
