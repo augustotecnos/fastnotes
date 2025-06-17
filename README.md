@@ -80,7 +80,9 @@ GridStack is installed via npm and imported as an ES module from `app.js`.
 
 1. Clique no botão **+** e escolha o 📁 para criar uma pasta.
 2. Clique na pasta para abrir a visualização em tela cheia.
-3. Use **ESC** ou o botão de voltar para fechar o overlay.
+3. Edite o título e a descrição da pasta.
+4. Use **ESC** ou o botão de voltar para fechar o overlay.
+5. Reabra a pasta e confirme que título e descrição foram salvos.
 
 ## Backup com JSON
 
