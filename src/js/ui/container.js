@@ -21,6 +21,8 @@ export function create(data = {}) {
       <div class="collapse__header">
         <button class="toggle" aria-label="Toggle">▾</button>
         <h6 contenteditable="true"></h6>
+        <button class="add-card" aria-label="Add card">+</button>
+        <button class="delete" aria-label="Delete">🗑️</button>
       </div>
       <div class="collapse__body">
         <div class="grid-stack subgrid" id="sub-${id}"></div>
@@ -29,6 +31,8 @@ export function create(data = {}) {
   const content = wrapper.firstElementChild;
   const titleEl = content.querySelector('h6');
   const toggleBtn = content.querySelector('button.toggle');
+  const addBtn = content.querySelector('button.add-card');
+  const delBtn = content.querySelector('button.delete');
   const bodyEl = content.querySelector('.collapse__body');
   const subEl = content.querySelector('.subgrid');
   titleEl.textContent = item.title;
@@ -40,6 +44,17 @@ export function create(data = {}) {
   subgrid.on('change', () => {
     item.layout = subgrid.save();
     Store.patch(id, { layout: item.layout });
+  });
+
+  addBtn.addEventListener('click', () => {
+    const el = createCard({ parent: id });
+    subgrid.addWidget(el, { x: 0, y: 0, w: 3, h: 2 });
+  });
+
+  delBtn.addEventListener('click', () => {
+    const g = wrapper.closest('.grid-stack')?.gridstack;
+    if (g) g.removeWidget(wrapper);
+    Store.remove(id);
   });
 
   // restore children
