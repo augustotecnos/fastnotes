@@ -4,6 +4,7 @@ import * as DriveSync from './drive/sync.js';
 
 const KEY = 'fastnotes-json';
 export let data = { version: 1, updated: Date.now(), items: {}, layout: [] };
+let syncTimer;
 
 export async function load() {
   const raw = localStorage.getItem(KEY);
@@ -14,7 +15,12 @@ export async function load() {
 export function save() {
   data.updated = Date.now();
   localStorage.setItem(KEY, JSON.stringify(data));
-  sync();
+  scheduleSync();
+}
+
+function scheduleSync() {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(sync, 2000);
 }
 
 export function upsert(item) {

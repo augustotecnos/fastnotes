@@ -7,9 +7,10 @@ export function create(data = {}) {
     type: 'container',
     title: data.title || 'Container',
     children: data.children || [],
+    layout: data.layout || [],
+    collapsed: data.collapsed || false,
     id: data.id,
-    parent: data.parent || 'root',
-    layout: data.layout || []
+    parent: data.parent || 'root'
   };
   const id = Store.upsert(item);
   const wrapper = document.createElement('div');
@@ -17,11 +18,18 @@ export function create(data = {}) {
   wrapper.dataset.parent = item.parent;
   wrapper.innerHTML = `
     <div class="grid-stack-item-content container">
-      <h6 contenteditable="true"></h6>
-      <div class="grid-stack subgrid" id="sub-${id}"></div>
+      <div class="collapse__header">
+        <button class="toggle" aria-label="Toggle">▾</button>
+        <h6 contenteditable="true"></h6>
+      </div>
+      <div class="collapse__body">
+        <div class="grid-stack subgrid" id="sub-${id}"></div>
+      </div>
     </div>`;
   const content = wrapper.firstElementChild;
   const titleEl = content.querySelector('h6');
+  const toggleBtn = content.querySelector('button.toggle');
+  const bodyEl = content.querySelector('.collapse__body');
   const subEl = content.querySelector('.subgrid');
   titleEl.textContent = item.title;
   titleEl.addEventListener('input', () => {
@@ -30,8 +38,8 @@ export function create(data = {}) {
 
   const subgrid = GridStack.init({ column: 12, float: false }, subEl);
   subgrid.on('change', () => {
-    Store.data.items[id].layout = subgrid.save();
-    Store.save();
+    item.layout = subgrid.save();
+    Store.patch(id, { layout: item.layout });
   });
 
   // restore children
@@ -42,17 +50,39 @@ export function create(data = {}) {
       if (!child) return;
       let el;
       if (child.type === 'card') el = createCard(child);
-      // support nested containers/folders later
-      subgrid.addWidget(el, opts);
+      if (el) subgrid.addWidget(el, opts);
     });
   } else if (item.children.length) {
     item.children.forEach(cid => {
       const child = Store.data.items[cid];
       if (!child) return;
-      let el = createCard(child);
-      subgrid.addWidget(el, {x:0,y:0,w:3,h:2});
+      const el = createCard(child);
+      subgrid.addWidget(el, { x: 0, y: 0, w: 3, h: 2 });
     });
   }
+
+  function setCollapsed(flag) {
+    bodyEl.style.display = flag ? 'none' : '';
+    toggleBtn.textContent = flag ? '▸' : '▾';
+    item.collapsed = flag;
+    content.classList.toggle('collapsed', flag);
+    Store.patch(id, { collapsed: flag });
+    adjustHeight();
+  }
+
+  toggleBtn.addEventListener('click', () => setCollapsed(!item.collapsed));
+
+  function adjustHeight() {
+    const parentGrid = wrapper.closest('.grid-stack')?.gridstack;
+    if (!parentGrid) return;
+    const cellH = parentGrid.getCellHeight();
+    const newH = Math.max(1, Math.ceil(content.offsetHeight / cellH));
+    parentGrid.update(wrapper, { h: newH });
+    parentGrid.save();
+  }
+
+  setCollapsed(item.collapsed);
+  setTimeout(adjustHeight);
 
   return { el: wrapper, grid: subgrid };
 }
