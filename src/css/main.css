@@ -23,6 +23,14 @@ body{margin:0;font-family:sans-serif}
 }
 .card-actions button{background:none;border:none;cursor:pointer}
 
+.container .collapse__header{display:flex;align-items:center;gap:.25rem;cursor:pointer}
+.container .collapse__header button{background:none;border:none;cursor:pointer}
+.container .collapse__body{overflow:hidden}
+#fab-menu{position:fixed;right:2rem;bottom:5rem;display:none;flex-direction:column;gap:.5rem}
+#fab-menu.show{display:flex}
+#fab-menu button{width:40px;height:40px;border-radius:50%;border:none;background:#007bff;color:#fff;font-size:1.25rem}
+
+
 #fab-menu{
   position:fixed;bottom:4.5rem;right:2rem;
   display:none;flex-direction:column;gap:.5rem;
@@ -72,5 +80,6 @@ body{margin:0;font-family:sans-serif}
   #fab-add{background:#0d6efd}
   .grid-stack-item-content{background:#1e1e1e;border-color:#ffffff33}
 }
+
 
 
