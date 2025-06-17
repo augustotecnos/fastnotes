@@ -36,7 +36,6 @@ export function remove(id) {
   save();
 }
 
-
 export function setParent(id, parentId) {
   const item = data.items[id];
   if (!item) return;
@@ -61,7 +60,7 @@ export function setParent(id, parentId) {
   }
 
   save();
-
+}
 
 export function exportJSON() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -79,6 +78,7 @@ export async function importJSON(file) {
   if (!obj || typeof obj !== 'object') return;
   data = obj;
   save();
+}
 
 export async function sync() {
   if (Auth.isSignedIn()) {
@@ -88,5 +88,4 @@ export async function sync() {
       console.error('Drive sync failed', err);
     }
   }
-
 }

@@ -3,21 +3,16 @@ import * as Store from './store.js';
 import { create as createCard } from './ui/card.js';
 import { create as createContainer } from './ui/container.js';
 import { create as createFolder } from './ui/folder.js';
-
-import { create as createContainer } from './ui/container.js';
-
-import { create as createFolder } from './ui/folder.js';
-
-import { create as createContainer } from './ui/container.js';
-import { create as createFolder } from './ui/folder.js';
+import { registerDriveSync } from './drive/sync.js';
+import * as Auth from './drive/auth.js';
+import * as Drive from './drive/sync.js';
+import { t, getLanguage } from './i18n.js';
 
 let dragItem = null;
 
 function attachGridEvents(g) {
   g.on('dragstart', (_e, el) => {
-    dragItem = {
-      id: el.getAttribute('gs-id'),
-    };
+    dragItem = { id: el.getAttribute('gs-id') };
   });
 
   g.on('dropped', (_e, prev, node) => {
@@ -31,21 +26,13 @@ function attachGridEvents(g) {
   });
 }
 
-import { registerDriveSync } from './drive/sync.js';
-
-import * as Auth from './drive/auth.js';
-import * as Drive from './drive/sync.js';
-
-import { t, getLanguage } from './i18n.js';
-
-
-
 const grid = GridStack.init(
   { column: 12, float: false, resizable: { handles: 'e, se, s, w' } },
   '#grid'
 );
 grid.on('change', saveLayout);
 
+attachGridEvents(grid);
 
 const fab = document.getElementById('fab');
 const fabMain = document.getElementById('fab-main');
@@ -57,117 +44,20 @@ fabMain.addEventListener('click', toggleMenu);
 fabCard.addEventListener('click', () => { addCard(); toggleMenu(false); });
 fabContainerBtn.addEventListener('click', () => { addContainer(); toggleMenu(false); });
 fabFolderBtn.addEventListener('click', () => { addFolder(); toggleMenu(false); });
-document.addEventListener('keydown', e => { if(e.key === 'Escape') toggleMenu(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') toggleMenu(false); });
 
 toggleMenu(false);
 
-function toggleMenu(force){
-  const open = typeof force === 'boolean' ? force : !fab.classList.contains('open');
-  fab.classList.toggle('open', open);
-  [fabCard, fabContainerBtn, fabFolderBtn].forEach(btn => btn.disabled = !open);
-  if(open) fabCard.focus();
-}
-
-
-const fabMenu = document.getElementById('fab-menu');
-document.getElementById('fab-add').addEventListener('click', () => {
-  fabMenu.hidden = !fabMenu.hidden;
-  fabMenu.classList.toggle('show');
-});
-document.getElementById('fab-card').addEventListener('click', () => {
-  addCard();
-  closeMenu();
-});
-document.getElementById('fab-container').addEventListener('click', () => {
-  addContainer();
-  closeMenu();
-});
-
-function closeMenu() {
-  fabMenu.hidden = true;
-  fabMenu.classList.remove('show');
-}
-
-
-const fabAdd = document.getElementById('fab-add');
-const fabMenu = document.getElementById('fab-menu');
-document.getElementById('fab-add-card').addEventListener('click', () => { fabMenu.classList.remove('show'); addCard(); });
-document.getElementById('fab-add-folder').addEventListener('click', () => { fabMenu.classList.remove('show'); addFolder(); });
-fabAdd.addEventListener('click', () => {
-  fabMenu.classList.toggle('show');
-});
-document.addEventListener('click', e => {
-  if (!fabAdd.contains(e.target) && !fabMenu.contains(e.target)) {
-    fabMenu.classList.remove('show');
-  }
-});
-
-
-attachGridEvents(grid);
-
-document.getElementById('fab-add').addEventListener('click', () => addCard());
-
-function addCard(data={x:0,y:0,w:3,h:2}, g=grid, parent='root'){
-  const el = createCard({parent});
-  g.addWidget(el,data);
-  if (g === grid) saveLayout();
-}
-
-function addContainer(data={x:0,y:0,w:6,h:4}) {
-  const { el, grid: sub } = createContainer({});
-  grid.addWidget(el, data);
-  attachGridEvents(sub);
-  saveLayout();
-}
-
-function addFolder(data={x:0,y:0,w:3,h:3}) {
-  const { el, grid: sub } = createFolder({});
-  grid.addWidget(el, data);
-  attachGridEvents(sub);
-
-
-function updateColumns() {
-  const width = window.innerWidth;
-  let cols = 12;
-  if (width < 600) cols = 3;
-  else if (width < 1024) cols = 6;
-  if (grid.opts.column !== cols) grid.column(cols);
-}
-window.addEventListener('resize', updateColumns);
-updateColumns();
-
-document.addEventListener('keydown', navigateCards);
-
-function navigateCards(e){
-  const cards = Array.from(document.querySelectorAll('.grid-stack-item-content'));
-  const idx = cards.indexOf(document.activeElement);
-  if (idx === -1) return;
-  if (['ArrowRight','ArrowDown'].includes(e.key)){
-    const next = cards[idx+1];
-    if (next){ next.focus(); e.preventDefault(); }
-  } else if (['ArrowLeft','ArrowUp'].includes(e.key)){
-    const prev = cards[idx-1];
-    if (prev){ prev.focus(); e.preventDefault(); }
-  } else if (e.key === 'Enter'){
-    const first = document.activeElement.querySelector('h6[contenteditable]') ||
-                  document.activeElement.querySelector('textarea');
-    if (first){ first.focus(); e.preventDefault(); }
-  }
-}
-
-document.getElementById('fab-add').addEventListener('click', addCard);
-
-
-
-
-document.getElementById('btn-export').addEventListener('click', Store.exportJSON);
-document.getElementById('btn-import').addEventListener('click', () =>
+document.getElementById('fab-add')?.addEventListener('click', addCard);
+document.getElementById('btn-export')?.addEventListener('click', Store.exportJSON);
+document.getElementById('btn-import')?.addEventListener('click', () =>
   document.getElementById('import-file').click()
 );
-document.getElementById('import-file').addEventListener('change', async e => {
+document.getElementById('import-file')?.addEventListener('change', async e => {
   if (!e.target.files.length) return;
   await Store.importJSON(e.target.files[0]);
   location.reload();
+});
 
 const authBtn = document.getElementById('auth-btn');
 authBtn.addEventListener('click', async () => {
@@ -183,37 +73,62 @@ authBtn.addEventListener('click', async () => {
       console.error(e);
     }
   }
-
 });
 
-function addCard(data={x:0,y:0,w:3,h:2}){
-  const el = createCard({});
-  grid.addWidget(el,data);
-  saveLayout();
+function toggleMenu(force) {
+  const open = typeof force === 'boolean' ? force : !fab.classList.contains('open');
+  fab.classList.toggle('open', open);
+  [fabCard, fabContainerBtn, fabFolderBtn].forEach(btn => btn.disabled = !open);
+  if (open) fabCard.focus();
 }
 
-
-function addContainer(data={x:0,y:0,w:3,h:2}){
-  const el = createContainer({});
-  grid.addWidget(el,data);
-  saveLayout();
+function addCard(data = { x: 0, y: 0, w: 3, h: 2 }, g = grid, parent = 'root') {
+  const el = createCard({ parent });
+  g.addWidget(el, data);
+  if (g === grid) saveLayout();
 }
 
-function addFolder(data={x:0,y:0,w:3,h:2}){
-  const el = createFolder({});
-  grid.addWidget(el,data);
-
-
-function addContainer(data={x:0,y:0,w:3,h:2}){
-  const el = createContainer({});
+function addContainer(data = { x: 0, y: 0, w: 6, h: 4 }) {
+  const { el, grid: sub } = createContainer({});
   grid.addWidget(el, data);
-
-function addFolder(data={x:0,y:0,w:3,h:3}){
-  const el = createFolder({});
-  grid.addWidget(el,data);
-
-
+  attachGridEvents(sub);
   saveLayout();
+}
+
+function addFolder(data = { x: 0, y: 0, w: 3, h: 3 }) {
+  const { el, grid: sub } = createFolder({});
+  grid.addWidget(el, data);
+  attachGridEvents(sub);
+  saveLayout();
+}
+
+function updateColumns() {
+  const width = window.innerWidth;
+  let cols = 12;
+  if (width < 600) cols = 3;
+  else if (width < 1024) cols = 6;
+  if (grid.opts.column !== cols) grid.column(cols);
+}
+window.addEventListener('resize', updateColumns);
+updateColumns();
+
+document.addEventListener('keydown', navigateCards);
+
+function navigateCards(e) {
+  const cards = Array.from(document.querySelectorAll('.grid-stack-item-content'));
+  const idx = cards.indexOf(document.activeElement);
+  if (idx === -1) return;
+  if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
+    const next = cards[idx + 1];
+    if (next) { next.focus(); e.preventDefault(); }
+  } else if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
+    const prev = cards[idx - 1];
+    if (prev) { prev.focus(); e.preventDefault(); }
+  } else if (e.key === 'Enter') {
+    const first = document.activeElement.querySelector('h6[contenteditable]') ||
+                  document.activeElement.querySelector('textarea');
+    if (first) { first.focus(); e.preventDefault(); }
+  }
 }
 
 function saveLayout() {
@@ -226,28 +141,6 @@ async function restore() {
   if (Store.data.layout && Store.data.layout.length) {
     grid.removeAll();
     Store.data.layout.forEach(opts => {
-
-      const item = Store.data.items[opts.id] || {};
-      let el;
-      if (item.type === 'container') el = createContainer(item);
-      else if (item.type === 'folder') el = createFolder(item);
-      else el = createCard(item);
-
-
-      const data = Store.data.items[opts.id] || {};
-      let el;
-      if (data.type === 'container') el = createContainer(data);
-      else el = createCard(data);
-
-
-      const item = Store.data.items[opts.id] || {};
-      let el;
-      if (item.type === 'folder') el = createFolder(item);
-      else el = createCard(item);
-
-
-      grid.addWidget(el, opts);
-
       const data = Store.data.items[opts.id] || {};
       let added;
       if (data.type === 'container') {
@@ -262,10 +155,8 @@ async function restore() {
         const el = createCard(data);
         grid.addWidget(el, opts);
       }
-
     });
   } else {
-    // primeiro uso: 3 cards demo
     addCard({ x: 0, y: 0 });
     addCard({ x: 3, y: 0 });
     addCard({ x: 6, y: 0 });
@@ -294,7 +185,6 @@ async function start() {
 
 start();
 
-// Register service worker for offline support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js');
