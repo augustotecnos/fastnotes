@@ -89,9 +89,10 @@ function addCard(data = { x: 0, y: 0, w: 3, h: 2 }, g = grid, parent = 'root') {
 }
 
 function addContainer(data = { x: 0, y: 0, w: 6, h: 4 }) {
-  const { el, grid: sub } = createContainer({});
-  grid.addWidget(el, data);
-  attachGridEvents(sub);
+  const added = createContainer({});
+  grid.addWidget(added.el, data);
+  attachGridEvents(added.grid);
+  added.adjust();
   saveLayout();
 }
 
@@ -146,6 +147,7 @@ async function restore() {
         added = createContainer(data);
         grid.addWidget(added.el, opts);
         attachGridEvents(added.grid);
+        added.adjust();
       } else if (data.type === 'folder') {
         const el = createFolder(data);
         grid.addWidget(el, opts);
