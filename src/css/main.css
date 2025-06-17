@@ -1,18 +1,16 @@
+
 body{margin:0;font-family:sans-serif}
 
 #fab{
-
+  position:fixed;right:2rem;bottom:2rem;
+  width:56px;height:56px;
+}
 
 #menu{position:fixed;left:1rem;top:1rem;display:flex;gap:.5rem}
 #menu button{border:none;background:#eee;padding:.25rem .5rem;border-radius:4px;cursor:pointer}
 
 #grid{display:grid;grid-template-columns:repeat(12,1fr);gap:.5rem}
 
-#fab-add{
-
-  position:fixed;right:2rem;bottom:2rem;
-  width:56px;height:56px
-}
 #fab button{
   position:absolute;top:0;left:0;width:56px;height:56px;border-radius:50%;
   font-size:2rem;border:none;background:#007bff;color:#fff;
@@ -26,7 +24,6 @@ body{margin:0;font-family:sans-serif}
 #fab.open #fab-card{transform:translate(-70px,0) scale(1)}
 #fab.open #fab-container{transform:translate(-50px,-50px) scale(1)}
 #fab.open #fab-folder{transform:translate(0,-70px) scale(1)}
-}
 .grid-stack-item-content{
   background:#fff;border:2px solid #00000020;border-radius:8px;
   display:flex;flex-direction:column;padding:.5rem
@@ -43,9 +40,6 @@ body{margin:0;font-family:sans-serif}
 .container .collapse__header{display:flex;align-items:center;gap:.25rem;cursor:pointer}
 .container .collapse__header button{background:none;border:none;cursor:pointer}
 .container .collapse__body{overflow:hidden}
-#fab-menu{position:fixed;right:2rem;bottom:5rem;display:none;flex-direction:column;gap:.5rem}
-#fab-menu.show{display:flex}
-#fab-menu button{width:40px;height:40px;border-radius:50%;border:none;background:#007bff;color:#fff;font-size:1.25rem}
 
 
 #fab-menu{
@@ -95,7 +89,7 @@ body{margin:0;font-family:sans-serif}
 
 @media (prefers-color-scheme: dark){
   body{background:#121212;color:#fff}
-  #fab-add{background:#0d6efd}
+  #fab{background:#0d6efd}
   .grid-stack-item-content{background:#1e1e1e;border-color:#ffffff33}
 }
 
