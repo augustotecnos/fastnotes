@@ -20,6 +20,7 @@ export function create(data = {}) {
       <div class="card-actions">
         <button class="lock" aria-label="Lock">🔒</button>
         <button class="copy" aria-label="Copy">📄</button>
+        <button class="delete" aria-label="Delete">🗑️</button>
         <input class="color" type="color" aria-label="Color" value="${item.color}">
       </div>
       <h6 contenteditable="true" spellcheck="false"></h6>
@@ -31,6 +32,7 @@ export function create(data = {}) {
   const colorEl = content.querySelector('input.color');
   const lockBtn = content.querySelector('button.lock');
   const copyBtn = content.querySelector('button.copy');
+  const delBtn = content.querySelector('button.delete');
   titleEl.textContent = item.title;
   textEl.value = item.text;
   lockBtn.setAttribute('aria-label', t('lock'));
@@ -55,6 +57,11 @@ export function create(data = {}) {
   });
   content.querySelector('button.copy').addEventListener('click', () => {
     navigator.clipboard.writeText(textEl.value);
+  });
+  delBtn.addEventListener('click', () => {
+    const g = wrapper.closest('.grid-stack')?.gridstack;
+    if (g) g.removeWidget(wrapper);
+    Store.remove(id);
   });
 
   function applyColor(value) {

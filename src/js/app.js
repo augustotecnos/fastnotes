@@ -27,7 +27,7 @@ function attachGridEvents(g) {
 }
 
 const grid = GridStack.init(
-  { column: 12, float: false, resizable: { handles: 'e, se, s, w' } },
+  { column: 12, float: false, resizable: { handles: 'e, se, s, w' }, acceptWidgets: true },
   '#grid'
 );
 grid.on('change', saveLayout);
