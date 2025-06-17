@@ -15,6 +15,7 @@ export function create(data = {}) {
   const wrapper = document.createElement('div');
   wrapper.setAttribute('gs-id', id);
   wrapper.dataset.parent = item.parent;
+  wrapper.dataset.color = item.color;
   wrapper.innerHTML = `
     <div class="grid-stack-item-content card" tabindex="0" role="listitem" aria-label="Note card">
       <div class="card-actions">
@@ -35,6 +36,7 @@ export function create(data = {}) {
   const delBtn = content.querySelector('button.delete');
   titleEl.textContent = item.title;
   textEl.value = item.text;
+  colorEl.value = item.color;
   lockBtn.setAttribute('aria-label', t('lock'));
   copyBtn.setAttribute('aria-label', t('copy'));
   applyColor(item.color);
@@ -67,7 +69,8 @@ export function create(data = {}) {
   });
 
   function applyColor(value) {
-    content.style.background = value;
+    wrapper.dataset.color = value;
+    content.style.backgroundColor = value;
   }
 
   function setLock(flag) {
