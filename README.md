@@ -68,6 +68,7 @@ GridStack is installed via npm and imported as an ES module from `app.js`.
 1. Execute `npm run dev` e abra `http://localhost:5173`.
 2. Clique no **+** e escolha **Container**.
 3. Use a seta para recolher e expandir. Arraste o container pelo grid.
+   A altura deve se ajustar imediatamente.
 4. Recarregue a página e confirme que o container continua no lugar.
 
 ### Passo de teste 4.5
@@ -109,4 +110,6 @@ You can also change it at runtime from the console:
 i18n.setLanguage("pt");
 ```
 
+
 Container buttons and the default container title now use translation keys.
+
