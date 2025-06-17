@@ -67,6 +67,13 @@ GridStack is installed via npm and imported as an ES module from `app.js`.
 3. Edite o título e o texto. Altere a cor e teste o bloqueio/copiar.
 4. Recarregue a página e confirme que o conteúdo persiste.
 
+
+### Passo de teste 4.5
+
+1. Clique no botão **+** e escolha o 📁 para criar uma pasta.
+2. Clique na pasta para abrir a visualização em tela cheia.
+3. Use **ESC** ou o botão de voltar para fechar o overlay.
+
 ## Backup com JSON
 
 Na interface é possível exportar as notas atuais clicando em **Export**. Um arquivo

@@ -23,6 +23,29 @@ body{margin:0;font-family:sans-serif}
 }
 .card-actions button{background:none;border:none;cursor:pointer}
 
+#fab-menu{
+  position:fixed;bottom:4.5rem;right:2rem;
+  display:none;flex-direction:column;gap:.5rem;
+}
+#fab-menu.show{display:flex;}
+#fab-menu button{
+  width:48px;height:48px;border-radius:50%;
+  border:none;background:#007bff;color:#fff;font-size:1.25rem;
+}
+.folder-icon{display:flex;align-items:center;justify-content:center;font-size:2rem;}
+.folder-overlay{
+  position:fixed;inset:0;background:#ffffff;z-index:1000;
+  display:flex;flex-direction:column;
+}
+.folder-overlay .folder-back{
+  align-self:flex-start;margin:1rem;padding:.5rem 1rem;
+  border:none;background:#007bff;color:#fff;border-radius:4px;cursor:pointer;
+}
+.folder-grid{flex:1;overflow:auto;padding:1rem;}
+.folder-grid::-webkit-scrollbar{width:8px;height:8px;}
+.folder-grid::-webkit-scrollbar-thumb{background:#007bff;border-radius:4px;}
+
+
 
 .folder-overlay{
   position:fixed;inset:0;background:#0008;display:flex;
@@ -49,4 +72,5 @@ body{margin:0;font-family:sans-serif}
   #fab-add{background:#0d6efd}
   .grid-stack-item-content{background:#1e1e1e;border-color:#ffffff33}
 }
+
 
