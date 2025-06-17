@@ -41,6 +41,16 @@ export function create(data = {}) {
   });
 
   const subgrid = GridStack.init({ column: 12, float: false, acceptWidgets: true, dragOut: true }, subEl);
+  function updateColumns() {
+    const width = subEl.clientWidth;
+    let cols = 12;
+    if (width < 600) cols = 3;
+    else if (width < 1024) cols = 6;
+    if (subgrid.opts.column !== cols) subgrid.column(cols);
+  }
+  const ro = new ResizeObserver(updateColumns);
+  ro.observe(subEl);
+  updateColumns();
   subgrid.on('change', () => {
     item.layout = subgrid.save();
     Store.patch(id, { layout: item.layout });
@@ -78,6 +88,7 @@ export function create(data = {}) {
 
   function setCollapsed(flag) {
     bodyEl.style.display = flag ? 'none' : '';
+    content.style.minHeight = flag ? '100px' : '';
     toggleBtn.textContent = flag ? '▸' : '▾';
     item.collapsed = flag;
     content.classList.toggle('collapsed', flag);
