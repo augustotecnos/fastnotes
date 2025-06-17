@@ -7,6 +7,7 @@ export function create(data = {}) {
     type: 'folder',
     title: data.title || 'Folder',
     children: data.children || [],
+
     layout: data.layout || [],
     id: data.id
   };
@@ -61,4 +62,53 @@ export function create(data = {}) {
   }
 
   return wrapper;
+    id: data.id,
+    parent: data.parent || 'root',
+    layout: data.layout || []
+  };
+  const id = Store.upsert(item);
+
+  const wrapper = document.createElement('div');
+  wrapper.setAttribute('gs-id', id);
+  wrapper.dataset.parent = item.parent;
+  wrapper.innerHTML = `<div class="grid-stack-item-content folder">📁 ${item.title}</div>`;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'folder-overlay hidden';
+  overlay.innerHTML = `<div class="grid-stack folder-grid" id="fold-${id}"></div>`;
+  document.body.appendChild(overlay);
+
+  const gridEl = overlay.querySelector('.folder-grid');
+  const grid = GridStack.init({ column: 12, float: false }, gridEl);
+  grid.on('change', () => {
+    Store.data.items[id].layout = grid.save();
+    Store.save();
+  });
+
+  wrapper.addEventListener('click', () => overlay.classList.remove('hidden'));
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.add('hidden');
+  });
+
+  // restore children
+  if (item.layout.length) {
+    grid.removeAll();
+    item.layout.forEach(opts => {
+      const child = Store.data.items[opts.id];
+      if (!child) return;
+      let el;
+      if (child.type === 'card') el = createCard(child);
+      grid.addWidget(el, opts);
+    });
+  } else if (item.children.length) {
+    item.children.forEach(cid => {
+      const child = Store.data.items[cid];
+      if (!child) return;
+      let el = createCard(child);
+      grid.addWidget(el, {x:0,y:0,w:3,h:2});
+    });
+  }
+
+  return { el: wrapper, grid };
+
 }
