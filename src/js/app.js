@@ -96,9 +96,8 @@ function addContainer(data = { x: 0, y: 0, w: 6, h: 4 }) {
 }
 
 function addFolder(data = { x: 0, y: 0, w: 3, h: 3 }) {
-  const { el, grid: sub } = createFolder({});
+  const el = createFolder({});
   grid.addWidget(el, data);
-  attachGridEvents(sub);
   saveLayout();
 }
 
@@ -148,9 +147,8 @@ async function restore() {
         grid.addWidget(added.el, opts);
         attachGridEvents(added.grid);
       } else if (data.type === 'folder') {
-        added = createFolder(data);
-        grid.addWidget(added.el, opts);
-        attachGridEvents(added.grid);
+        const el = createFolder(data);
+        grid.addWidget(el, opts);
       } else {
         const el = createCard(data);
         grid.addWidget(el, opts);

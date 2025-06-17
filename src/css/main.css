@@ -41,7 +41,8 @@ body{margin:0;font-family:sans-serif}
 }
 .card-actions button{background:none;border:none;cursor:pointer}
 
-.container .collapse__header{display:flex;align-items:center;gap:.25rem;cursor:pointer}
+.container .collapse__header{display:flex;align-items:center;gap:.25rem}
+.container .collapse__header h6{flex:1}
 .container .collapse__header button{background:none;border:none;cursor:pointer}
 .container .collapse__body{overflow:hidden}
 .container.collapsed .collapse__body{display:none}
