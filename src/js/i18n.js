@@ -1,0 +1,50 @@
+export const PT = {
+  add: 'Adicionar',
+  lock: 'Bloquear',
+  unlock: 'Desbloquear',
+  copy: 'Copiar',
+  titleDefault: 'Título'
+};
+
+export const EN = {
+  add: 'Add',
+  lock: 'Lock',
+  unlock: 'Unlock',
+  copy: 'Copy',
+  titleDefault: 'Title'
+};
+
+const DICTS = { pt: PT, en: EN };
+let currentLang = 'en';
+
+function detect() {
+  const saved = localStorage.getItem('lang');
+  if (saved && DICTS[saved]) {
+    currentLang = saved;
+  } else if (navigator.language && navigator.language.startsWith('pt')) {
+    currentLang = 'pt';
+  }
+  document.documentElement.lang = currentLang;
+}
+
+detect();
+
+export function setLanguage(lang) {
+  if (DICTS[lang]) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    document.documentElement.lang = currentLang;
+  }
+}
+
+export function getLanguage() {
+  return currentLang;
+}
+
+export function t(key) {
+  return DICTS[currentLang][key] || key;
+}
+
+if (typeof window !== 'undefined') {
+  window.i18n = { t, setLanguage, getLanguage };
+}
