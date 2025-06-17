@@ -48,8 +48,11 @@ export function create(data = {}) {
     subGrid: true
   }, subEl);
   function updateColumns() {
+    const parentGrid = wrapper.closest('.grid-stack')?.gridstack;
+    if (!parentGrid) return;
+    const cellW = parentGrid.cellWidth();
     const width = subEl.clientWidth;
-    let cols = Math.floor(width / 150);
+    let cols = Math.round(width / cellW);
     if (cols < 1) cols = 1;
     if (cols > 12) cols = 12;
     if (subgrid.opts.column !== cols) subgrid.column(cols);
