@@ -41,6 +41,7 @@ export function create(data = {}) {
   });
 
   const subgrid = GridStack.init({
+    margin: 8,
     column: 12,
     float: false,
     acceptWidgets: true,
