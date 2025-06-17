@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -11,12 +11,16 @@
   <script type="module" src="/src/js/app.js"></script>
 </head>
 <body>
+
   <div id="menu">
     <button id="btn-export" aria-label="Exportar">Export</button>
     <button id="btn-import" aria-label="Importar">Import</button>
     <input type="file" id="import-file" accept=".fastnotes.json" hidden>
   </div>
+
+  <button id="auth-btn">Login</button>
+
   <button id="fab-add" aria-label="Adicionar">+</button>
-  <div class="grid-stack" id="grid"></div>
+  <div class="grid-stack" id="grid" role="list" aria-label="Notas"></div>
 </body>
 </html>
