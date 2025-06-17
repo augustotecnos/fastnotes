@@ -1,6 +1,8 @@
 import { GridStack } from 'gridstack';
 import * as Store from './store.js';
 import { create as createCard } from './ui/card.js';
+import { create as createContainer } from './ui/container.js';
+import { create as createFolder } from './ui/folder.js';
 
 import { create as createContainer } from './ui/container.js';
 
@@ -43,6 +45,28 @@ const grid = GridStack.init(
   '#grid'
 );
 grid.on('change', saveLayout);
+
+
+const fab = document.getElementById('fab');
+const fabMain = document.getElementById('fab-main');
+const fabCard = document.getElementById('fab-card');
+const fabContainerBtn = document.getElementById('fab-container');
+const fabFolderBtn = document.getElementById('fab-folder');
+
+fabMain.addEventListener('click', toggleMenu);
+fabCard.addEventListener('click', () => { addCard(); toggleMenu(false); });
+fabContainerBtn.addEventListener('click', () => { addContainer(); toggleMenu(false); });
+fabFolderBtn.addEventListener('click', () => { addFolder(); toggleMenu(false); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') toggleMenu(false); });
+
+toggleMenu(false);
+
+function toggleMenu(force){
+  const open = typeof force === 'boolean' ? force : !fab.classList.contains('open');
+  fab.classList.toggle('open', open);
+  [fabCard, fabContainerBtn, fabFolderBtn].forEach(btn => btn.disabled = !open);
+  if(open) fabCard.focus();
+}
 
 
 const fabMenu = document.getElementById('fab-menu');
@@ -135,6 +159,7 @@ document.getElementById('fab-add').addEventListener('click', addCard);
 
 
 
+
 document.getElementById('btn-export').addEventListener('click', Store.exportJSON);
 document.getElementById('btn-import').addEventListener('click', () =>
   document.getElementById('import-file').click()
@@ -170,11 +195,23 @@ function addCard(data={x:0,y:0,w:3,h:2}){
 
 function addContainer(data={x:0,y:0,w:3,h:2}){
   const el = createContainer({});
+  grid.addWidget(el,data);
+  saveLayout();
+}
+
+function addFolder(data={x:0,y:0,w:3,h:2}){
+  const el = createFolder({});
+  grid.addWidget(el,data);
+
+
+function addContainer(data={x:0,y:0,w:3,h:2}){
+  const el = createContainer({});
   grid.addWidget(el, data);
 
 function addFolder(data={x:0,y:0,w:3,h:3}){
   const el = createFolder({});
   grid.addWidget(el,data);
+
 
   saveLayout();
 }
@@ -190,6 +227,13 @@ async function restore() {
     grid.removeAll();
     Store.data.layout.forEach(opts => {
 
+      const item = Store.data.items[opts.id] || {};
+      let el;
+      if (item.type === 'container') el = createContainer(item);
+      else if (item.type === 'folder') el = createFolder(item);
+      else el = createCard(item);
+
+
       const data = Store.data.items[opts.id] || {};
       let el;
       if (data.type === 'container') el = createContainer(data);
@@ -200,6 +244,7 @@ async function restore() {
       let el;
       if (item.type === 'folder') el = createFolder(item);
       else el = createCard(item);
+
 
       grid.addWidget(el, opts);
 
