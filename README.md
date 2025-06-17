@@ -67,6 +67,14 @@ GridStack is installed via npm and imported as an ES module from `app.js`.
 3. Edite o título e o texto. Altere a cor e teste o bloqueio/copiar.
 4. Recarregue a página e confirme que o conteúdo persiste.
 
+## Backup com JSON
+
+Na interface é possível exportar as notas atuais clicando em **Export**. Um arquivo
+terminado em `.fastnotes.json` será baixado contendo todos os dados.
+
+Para restaurar, clique em **Import** e escolha um arquivo exportado
+anteriormente. A página será recarregada com o conteúdo importado.
+
 
 ### Passo de teste 4.9
 
@@ -90,5 +98,6 @@ You can also change it at runtime from the console:
 ```js
 i18n.setLanguage('pt');
 ```
+
 
 

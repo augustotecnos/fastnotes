@@ -46,6 +46,16 @@ function navigateCards(e){
 }
 
 document.getElementById('fab-add').addEventListener('click', addCard);
+
+document.getElementById('btn-export').addEventListener('click', Store.exportJSON);
+document.getElementById('btn-import').addEventListener('click', () =>
+  document.getElementById('import-file').click()
+);
+document.getElementById('import-file').addEventListener('change', async e => {
+  if (!e.target.files.length) return;
+  await Store.importJSON(e.target.files[0]);
+  location.reload();
+
 const authBtn = document.getElementById('auth-btn');
 authBtn.addEventListener('click', async () => {
   if (Auth.isSignedIn()) {
@@ -60,6 +70,7 @@ authBtn.addEventListener('click', async () => {
       console.error(e);
     }
   }
+
 });
 
 function addCard(data={x:0,y:0,w:3,h:2}){

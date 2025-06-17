@@ -35,6 +35,24 @@ export function remove(id) {
   save();
 }
 
+
+export function exportJSON() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `fastnotes-${Date.now()}.fastnotes.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export async function importJSON(file) {
+  const text = await file.text();
+  const obj = JSON.parse(text);
+  if (!obj || typeof obj !== 'object') return;
+  data = obj;
+  save();
+
 export async function sync() {
   if (Auth.isSignedIn()) {
     try {
@@ -43,4 +61,5 @@ export async function sync() {
       console.error('Drive sync failed', err);
     }
   }
+
 }
