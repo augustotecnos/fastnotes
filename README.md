@@ -23,12 +23,14 @@ npm run dev
 
 ## Build & Deploy
 
-Create a production build in the `dist` folder:
+Create a production build with PWA assets in the `dist` folder:
 
 ```bash
 npm run build
 ```
 
+
+To preview the production build locally:
 Copy the contents of `dist/` to a static host such as GitHub Pages or Netlify.
 If the app is served from a subpath (for example
 `https://username.github.io/fastnotes/`), add
@@ -36,23 +38,24 @@ If the app is served from a subpath (for example
 
 ## Enabling the service worker
 
-The service worker located at `src/js/service-worker.js` enables offline support.
-Register it from your application entry or add the snippet below to `index.html`:
-
-```html
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/src/js/service-worker.js");
-}
-</script>
+```bash
+npm run preview
 ```
 
+
+## PWA Support
+
+`vite-plugin-pwa` injects the service worker and manifest automatically.
+Offline support is enabled by default and registered from `app.js`.
+
+=======
 
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
 =======
+
 ## Loading GridStack
 
 GridStack is installed via npm and imported as an ES module from `app.js`.

@@ -1,6 +1,7 @@
 import { GridStack } from 'gridstack';
 import * as Store from './store.js';
 import { create as createCard } from './ui/card.js';
+import { registerDriveSync } from './drive/sync.js';
 
 import * as Auth from './drive/auth.js';
 import * as Drive from './drive/sync.js';
@@ -113,6 +114,7 @@ start();
 // Register service worker for offline support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/src/js/service-worker.js');
+    navigator.serviceWorker.register('/service-worker.js');
   });
+  registerDriveSync();
 }
