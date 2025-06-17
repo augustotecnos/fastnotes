@@ -1,4 +1,6 @@
 import { nanoid } from 'nanoid';
+import * as Auth from './drive/auth.js';
+import * as DriveSync from './drive/sync.js';
 
 const KEY = 'fastnotes-json';
 export let data = { version: 1, updated: Date.now(), items: {}, layout: [] };
@@ -12,6 +14,7 @@ export async function load() {
 export function save() {
   data.updated = Date.now();
   localStorage.setItem(KEY, JSON.stringify(data));
+  sync();
 }
 
 export function upsert(item) {
@@ -30,4 +33,14 @@ export function patch(id, changes) {
 export function remove(id) {
   delete data.items[id];
   save();
+}
+
+export async function sync() {
+  if (Auth.isSignedIn()) {
+    try {
+      await DriveSync.upload(data);
+    } catch (err) {
+      console.error('Drive sync failed', err);
+    }
+  }
 }
