@@ -1,9 +1,10 @@
 import * as Store from '../store.js';
+import { t } from '../i18n.js';
 
 export function create(data = {}) {
   const item = {
     type: 'card',
-    title: data.title || 'Título',
+    title: data.title || t('titleDefault'),
     text: data.text || '',
     color: data.color || '#77d6ec',
     locked: data.locked || false,
@@ -15,11 +16,11 @@ export function create(data = {}) {
   wrapper.setAttribute('gs-id', id);
   wrapper.dataset.parent = item.parent;
   wrapper.innerHTML = `
-    <div class="grid-stack-item-content card">
+    <div class="grid-stack-item-content card" tabindex="0" role="listitem" aria-label="Note card">
       <div class="card-actions">
         <button class="lock" aria-label="Lock">🔒</button>
         <button class="copy" aria-label="Copy">📄</button>
-        <input class="color" type="color" value="${item.color}">
+        <input class="color" type="color" aria-label="Color" value="${item.color}">
       </div>
       <h6 contenteditable="true" spellcheck="false"></h6>
       <textarea></textarea>
@@ -29,8 +30,11 @@ export function create(data = {}) {
   const textEl = content.querySelector('textarea');
   const colorEl = content.querySelector('input.color');
   const lockBtn = content.querySelector('button.lock');
+  const copyBtn = content.querySelector('button.copy');
   titleEl.textContent = item.title;
   textEl.value = item.text;
+  lockBtn.setAttribute('aria-label', t('lock'));
+  copyBtn.setAttribute('aria-label', t('copy'));
   applyColor(item.color);
   setLock(item.locked);
 
@@ -45,7 +49,8 @@ export function create(data = {}) {
     Store.patch(id, { color: colorEl.value });
   });
   lockBtn.addEventListener('click', () => {
-    setLock(!wrapper.dataset.locked);
+    const locked = wrapper.dataset.locked === 'true';
+    setLock(!locked);
     Store.patch(id, { locked: wrapper.dataset.locked === 'true' });
   });
   content.querySelector('button.copy').addEventListener('click', () => {
@@ -61,6 +66,7 @@ export function create(data = {}) {
     titleEl.contentEditable = !flag;
     textEl.readOnly = flag;
     lockBtn.textContent = flag ? '🔓' : '🔒';
+    lockBtn.setAttribute('aria-label', flag ? t('unlock') : t('lock'));
   }
 
   return wrapper;
