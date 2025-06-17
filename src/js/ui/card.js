@@ -8,11 +8,13 @@ export function create(data = {}) {
     text: data.text || '',
     color: data.color || '#77d6ec',
     locked: data.locked || false,
-    id: data.id
+    id: data.id,
+    parent: data.parent || 'root'
   };
   const id = Store.upsert(item);
   const wrapper = document.createElement('div');
   wrapper.setAttribute('gs-id', id);
+  wrapper.dataset.parent = item.parent;
   wrapper.innerHTML = `
     <div class="grid-stack-item-content card" tabindex="0" role="listitem" aria-label="Note card">
       <div class="card-actions">
