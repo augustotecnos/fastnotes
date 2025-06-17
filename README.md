@@ -47,6 +47,12 @@ if ("serviceWorker" in navigator) {
 </script>
 ```
 
+
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+=======
 ## Loading GridStack
 
 GridStack is installed via npm and imported as an ES module from `app.js`.
@@ -81,4 +87,5 @@ You can also change it at runtime from the console:
 ```js
 i18n.setLanguage('pt');
 ```
+
 
