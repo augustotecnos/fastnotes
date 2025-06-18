@@ -27,7 +27,9 @@ body{margin:0;font-family:sans-serif}
 #fab.open #fab-folder{transform:translate(0,-70px) scale(1)}
 .grid-stack-item-content{
   background:#fff;border:2px solid #00000020;border-radius:8px;
-  display:flex;flex-direction:column;padding:.5rem
+  display:flex;flex-direction:column;
+  height:100%;
+  padding:.5rem
 }
 .grid-stack>.grid-stack-item>.grid-stack-item-content{
   box-sizing:border-box;
