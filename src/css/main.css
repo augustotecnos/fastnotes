@@ -61,6 +61,7 @@ body{margin:0;font-family:sans-serif}
   display:grid;
   gap:8px;
   grid-template-columns:repeat(var(--cols,3),1fr);
+  grid-auto-rows:100px;
   min-height:100px
 }
 .container.collapsed{min-height:100px;height:100px;overflow:hidden;position:relative}
