@@ -78,6 +78,16 @@ export function create(data = {}) {
     Store.remove(id);
   });
 
+  wrapper.addEventListener("childadded", (e) => {
+    const el = e.detail.el;
+    if (!gridEl.contains(el)) {
+      gridEl.appendChild(el);
+      initCard(el);
+      saveChildren();
+      adjustHeight();
+    }
+  });
+
   function restoreChildren() {
     if (item.layout.length && !item.children.length) {
       item.layout.forEach((opts) => {
@@ -109,6 +119,8 @@ export function create(data = {}) {
     el.addEventListener("moveout", onMoveOut);
     const handle = el.querySelector(".resize-handle");
     if (handle) handle.addEventListener("pointerdown", startResize);
+    const textarea = el.querySelector("textarea");
+    if (textarea) textarea.addEventListener("input", () => autoHeight(el));
   }
 
   function applySize(el) {
@@ -140,6 +152,20 @@ export function create(data = {}) {
     saveChildren();
     adjustHeight();
   });
+
+  function autoHeight(el) {
+    const cols =
+      parseInt(getComputedStyle(gridEl).getPropertyValue("--cols")) || 1;
+    const cell = gridEl.clientWidth / cols;
+    const content = el.firstElementChild;
+    const newH = Math.max(1, Math.ceil(content.offsetHeight / cell));
+    if (newH !== parseInt(el.dataset.h)) {
+      el.dataset.h = newH;
+      applySize(el);
+      saveChildren();
+      adjustHeight();
+    }
+  }
 
   function startResize(e) {
     e.preventDefault();

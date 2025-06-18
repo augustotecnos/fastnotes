@@ -9,6 +9,8 @@ export const PT = {
   addCard: "Adicionar card",
   delete: "Excluir",
   moveOut: "Enviar para tela principal",
+  moveIn: "Mover para container",
+  selectContainer: "Escolha o container (id)",
 };
 
 export const EN = {
@@ -22,6 +24,8 @@ export const EN = {
   addCard: "Add card",
   delete: "Delete",
   moveOut: "Move out",
+  moveIn: "Move into container",
+  selectContainer: "Choose container (id)",
 };
 
 const DICTS = { pt: PT, en: EN };
