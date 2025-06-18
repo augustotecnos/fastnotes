@@ -172,6 +172,8 @@ grid.el.addEventListener("movein", (e) => {
   const gridEl = targetEl?.querySelector(".native-grid");
   if (!gridEl) return;
   grid.removeWidget(cardEl);
+  GridStack.Utils.removePositioningStyles(cardEl);
+  cardEl.classList.remove("grid-stack-item");
   gridEl.appendChild(cardEl);
   cardEl.dataset.parent = targetId;
   Store.setParent(cardEl.getAttribute("gs-id"), targetId);
