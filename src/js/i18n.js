@@ -8,6 +8,7 @@ export const PT = {
   toggle: "Alternar",
   addCard: "Adicionar card",
   delete: "Excluir",
+  moveOut: "Enviar para tela principal",
 };
 
 export const EN = {
@@ -20,6 +21,7 @@ export const EN = {
   toggle: "Toggle",
   addCard: "Add card",
   delete: "Delete",
+  moveOut: "Move out",
 };
 
 const DICTS = { pt: PT, en: EN };
