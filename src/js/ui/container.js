@@ -2,7 +2,7 @@ import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
 
-const MAX_COLS = 3;
+const MAX_COLS = 12;
 
 export function create(data = {}) {
   const item = {
@@ -56,7 +56,6 @@ export function create(data = {}) {
     if (!parentGrid) return;
     if (bodyEl.style.display === "none") return;
     const cellW = parentGrid.cellWidth();
-    wrapperEl.style.maxWidth = `${cellW * MAX_COLS}px`;
     const width = gridEl.clientWidth;
     let cols = Math.round(width / cellW);
     cols = Math.max(1, Math.min(MAX_COLS, cols));

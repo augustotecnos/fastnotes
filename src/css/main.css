@@ -32,7 +32,6 @@ body{margin:0;font-family:sans-serif}
   min-height:100%;
   padding:.5rem
 }
-.grid-stack-item-content.container{min-width:40%}
 .grid-stack>.grid-stack-item>.grid-stack-item-content{
   box-sizing:border-box;
 }
