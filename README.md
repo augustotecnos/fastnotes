@@ -55,6 +55,8 @@ Offline support is enabled by default and registered from `app.js`.
 ## Loading GridStack
 
 GridStack is installed via npm and imported as an ES module from `app.js`.
+Containers no longer use a nested GridStack instance. Instead, their internal
+layout relies on a native CSS Grid controlled with JavaScript.
 
 ### Passo de teste 4.2
 
