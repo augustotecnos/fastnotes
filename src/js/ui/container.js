@@ -1,15 +1,11 @@
-import { GridStack } from "gridstack";
 import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
-
 import { t } from "../i18n.js";
 
 export function create(data = {}) {
   const item = {
     type: "container",
-
     title: data.title || t("containerDefault"),
-
     children: data.children || [],
     layout: data.layout || [],
     collapsed: data.collapsed || false,
@@ -28,9 +24,7 @@ export function create(data = {}) {
         <button class="add-card" aria-label="Add card">+</button>
         <button class="delete" aria-label="Delete">🗑️</button>
       </div>
-      <div class="collapse__body">
-        <div class="grid-stack subgrid" id="sub-${id}"></div>
-      </div>
+      <div class="collapse__body native-grid"></div>
     </div>`;
   const content = wrapper.firstElementChild;
   const titleEl = content.querySelector("h6");
@@ -38,7 +32,7 @@ export function create(data = {}) {
   const addBtn = content.querySelector("button.add-card");
   const delBtn = content.querySelector("button.delete");
   const bodyEl = content.querySelector(".collapse__body");
-  const subEl = content.querySelector(".subgrid");
+  const gridEl = content.querySelector(".native-grid");
 
   toggleBtn.setAttribute("aria-label", t("toggle"));
   addBtn.setAttribute("aria-label", t("addCard"));
@@ -49,47 +43,32 @@ export function create(data = {}) {
     Store.patch(id, { title: titleEl.textContent });
   });
 
-  const subgrid = GridStack.init(
-    {
-      margin: 8,
-      column: 12,
-      float: false,
-      acceptWidgets: true,
-      dragOut: true,
-      subGrid: true,
-    },
-    subEl,
-  );
   function updateColumns() {
     const parentGrid = wrapper.closest(".grid-stack")?.gridstack;
     if (!parentGrid) return;
     if (bodyEl.style.display === "none") return;
     const cellW = parentGrid.cellWidth();
-    const width = subEl.clientWidth;
+    const width = gridEl.clientWidth;
     let cols = Math.round(width / cellW);
     cols = Math.max(1, Math.min(12, cols));
-    if (subgrid.opts.column !== cols) subgrid.column(cols);
-    // keep the inner grid row height in sync with the parent grid
-    const cellH = parentGrid.getCellHeight();
-    if (subgrid.opts.cellHeight !== cellH) subgrid.cellHeight(cellH);
+    gridEl.style.setProperty("--cols", cols);
     adjustHeight();
   }
+
   const ro = new ResizeObserver(updateColumns);
-  ro.observe(subEl);
+  ro.observe(gridEl);
   setTimeout(() => {
     updateColumns();
     restoreChildren();
     adjustHeight();
   });
-  subgrid.on("change", () => {
-    item.layout = subgrid.save();
-    Store.patch(id, { layout: item.layout });
-    adjustHeight();
-  });
 
   addBtn.addEventListener("click", () => {
     const el = createCard({ parent: id });
-    subgrid.addWidget(el, { x: 0, y: 0, w: 3, h: 2 });
+    gridEl.appendChild(el);
+    item.children.push(el.getAttribute("gs-id"));
+    Store.patch(id, { children: item.children });
+    adjustHeight();
   });
 
   delBtn.addEventListener("click", () => {
@@ -99,21 +78,21 @@ export function create(data = {}) {
   });
 
   function restoreChildren() {
-    if (item.layout.length) {
-      subgrid.removeAll();
+    if (item.layout.length && !item.children.length) {
       item.layout.forEach((opts) => {
         const child = Store.data.items[opts.id];
         if (!child) return;
-        let el;
-        if (child.type === "card") el = createCard(child);
-        if (el) subgrid.addWidget(el, opts);
+        item.children.push(opts.id);
       });
-    } else if (item.children.length) {
+      Store.patch(id, { children: item.children, layout: [] });
+    }
+    if (item.children.length) {
+      gridEl.innerHTML = "";
       item.children.forEach((cid) => {
         const child = Store.data.items[cid];
         if (!child) return;
         const el = createCard(child);
-        subgrid.addWidget(el, { x: 0, y: 0, w: 3, h: 2 });
+        gridEl.appendChild(el);
       });
     }
   }
@@ -145,5 +124,5 @@ export function create(data = {}) {
   // initialize state after caller inserts element into the grid
   setCollapsed(item.collapsed);
 
-  return { el: wrapper, grid: subgrid, adjust: adjustHeight, setCollapsed };
+  return { el: wrapper, adjust: adjustHeight, setCollapsed };
 }
