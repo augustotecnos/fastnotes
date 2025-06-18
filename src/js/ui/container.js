@@ -33,6 +33,7 @@ export function create(data = {}) {
   const delBtn = content.querySelector("button.delete");
   const bodyEl = content.querySelector(".collapse__body");
   const gridEl = content.querySelector(".native-grid");
+  let dragEl = null;
 
   toggleBtn.setAttribute("aria-label", t("toggle"));
   addBtn.setAttribute("aria-label", t("addCard"));
@@ -66,8 +67,8 @@ export function create(data = {}) {
   addBtn.addEventListener("click", () => {
     const el = createCard({ parent: id });
     gridEl.appendChild(el);
-    item.children.push(el.getAttribute("gs-id"));
-    Store.patch(id, { children: item.children });
+    initCard(el);
+    saveChildren();
     adjustHeight();
   });
 
@@ -84,16 +85,116 @@ export function create(data = {}) {
         if (!child) return;
         item.children.push(opts.id);
       });
-      Store.patch(id, { children: item.children, layout: [] });
+      Store.patch(id, { children: item.children });
     }
     if (item.children.length) {
       gridEl.innerHTML = "";
       item.children.forEach((cid) => {
         const child = Store.data.items[cid];
         if (!child) return;
+        const opts = item.layout.find((o) => o.id === cid) || { w: 1, h: 1 };
         const el = createCard(child);
         gridEl.appendChild(el);
+        initCard(el, opts);
       });
+    }
+  }
+
+  function initCard(el, opts = {}) {
+    el.draggable = true;
+    el.dataset.w = opts.w || 1;
+    el.dataset.h = opts.h || 1;
+    applySize(el);
+    el.addEventListener("dragstart", onDragStart);
+    el.addEventListener("moveout", onMoveOut);
+    const handle = el.querySelector(".resize-handle");
+    if (handle) handle.addEventListener("pointerdown", startResize);
+  }
+
+  function applySize(el) {
+    el.style.gridColumnEnd = `span ${el.dataset.w}`;
+    el.style.gridRowEnd = `span ${el.dataset.h}`;
+  }
+
+  function onDragStart(e) {
+    dragEl = e.currentTarget;
+  }
+
+  gridEl.addEventListener("dragover", (e) => {
+    if (!dragEl) return;
+    e.preventDefault();
+    const target = e.target.closest("[gs-id]");
+    if (!target || target === dragEl) return;
+    const rect = target.getBoundingClientRect();
+    const next = e.clientY - rect.top > rect.height / 2;
+    gridEl.insertBefore(dragEl, next ? target.nextSibling : target);
+  });
+
+  gridEl.addEventListener("drop", () => {
+    dragEl = null;
+    saveChildren();
+    adjustHeight();
+  });
+
+  gridEl.addEventListener("removed", () => {
+    saveChildren();
+    adjustHeight();
+  });
+
+  function startResize(e) {
+    e.preventDefault();
+    const el = e.target.closest("[gs-id]");
+    const startW = parseInt(el.dataset.w || 1);
+    const startH = parseInt(el.dataset.h || 1);
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const cols =
+      parseInt(getComputedStyle(gridEl).getPropertyValue("--cols")) || 1;
+    const cell = gridEl.clientWidth / cols;
+    function onMove(ev) {
+      const w = Math.max(1, Math.round(startW + (ev.clientX - startX) / cell));
+      const h = Math.max(1, Math.round(startH + (ev.clientY - startY) / cell));
+      el.dataset.w = w;
+      el.dataset.h = h;
+      applySize(el);
+      adjustHeight();
+    }
+    function onUp() {
+      document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerup", onUp);
+      saveChildren();
+    }
+    document.addEventListener("pointermove", onMove);
+    document.addEventListener("pointerup", onUp);
+  }
+
+  function onMoveOut(e) {
+    const el = e.currentTarget;
+    const rootGrid = document.getElementById("grid")?.gridstack;
+    if (!rootGrid) return;
+    gridEl.removeChild(el);
+    rootGrid.addWidget(el, { x: 0, y: 0, w: 3, h: 2 });
+    Store.setParent(el.getAttribute("gs-id"), "root");
+    saveChildren();
+    saveRootLayout();
+  }
+
+  function saveChildren() {
+    const arr = Array.from(gridEl.children).map((c) => ({
+      id: c.getAttribute("gs-id"),
+      w: parseInt(c.dataset.w || 1),
+      h: parseInt(c.dataset.h || 1),
+    }));
+    item.layout = arr;
+    item.children = arr.map((o) => o.id);
+    Store.patch(id, { children: item.children, layout: item.layout });
+  }
+
+  function saveRootLayout() {
+    const rootGrid = document.getElementById("grid")?.gridstack;
+    if (rootGrid) {
+      Store.data.layout = rootGrid.save();
+      Store.save();
     }
   }
 
