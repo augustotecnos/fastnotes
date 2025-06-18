@@ -4,14 +4,11 @@ import { create as createCard } from "./card.js";
 
 import { t } from "../i18n.js";
 
-
 export function create(data = {}) {
   const item = {
     type: "container",
 
     title: data.title || t("containerDefault"),
-
-    title: data.title || "Container",
 
     children: data.children || [],
     layout: data.layout || [],
@@ -66,11 +63,11 @@ export function create(data = {}) {
   function updateColumns() {
     const parentGrid = wrapper.closest(".grid-stack")?.gridstack;
     if (!parentGrid) return;
+    if (bodyEl.style.display === "none") return;
     const cellW = parentGrid.cellWidth();
     const width = subEl.clientWidth;
     let cols = Math.round(width / cellW);
-    if (cols < 1) cols = 1;
-    if (cols > 12) cols = 12;
+    cols = Math.max(1, Math.min(12, cols));
     if (subgrid.opts.column !== cols) subgrid.column(cols);
     // keep the inner grid row height in sync with the parent grid
     const cellH = parentGrid.getCellHeight();
@@ -128,7 +125,10 @@ export function create(data = {}) {
     item.collapsed = flag;
     content.classList.toggle("collapsed", flag);
     Store.patch(id, { collapsed: flag });
-    setTimeout(adjustHeight, 300);
+    setTimeout(() => {
+      adjustHeight();
+      if (!flag) updateColumns();
+    }, 300);
   }
 
   toggleBtn.addEventListener("click", () => setCollapsed(!item.collapsed));
