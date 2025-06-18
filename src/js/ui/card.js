@@ -21,6 +21,7 @@ export function create(data = {}) {
       <div class="card-actions">
         <button class="lock" aria-label="Lock">🔒</button>
         <button class="copy" aria-label="Copy">📄</button>
+        <button class="move-in" aria-label="Move in">↘</button>
         <button class="move-out" aria-label="Move out">↗</button>
         <button class="delete" aria-label="Delete">🗑️</button>
         <input class="color" type="color" aria-label="Color" value="${item.color}">
@@ -35,6 +36,7 @@ export function create(data = {}) {
   const colorEl = content.querySelector("input.color");
   const lockBtn = content.querySelector("button.lock");
   const copyBtn = content.querySelector("button.copy");
+  const moveInBtn = content.querySelector("button.move-in");
   const moveOutBtn = content.querySelector("button.move-out");
   const delBtn = content.querySelector("button.delete");
   titleEl.textContent = item.title;
@@ -42,6 +44,7 @@ export function create(data = {}) {
   colorEl.value = item.color;
   lockBtn.setAttribute("aria-label", t("lock"));
   copyBtn.setAttribute("aria-label", t("copy"));
+  moveInBtn.setAttribute("aria-label", t("moveIn"));
   moveOutBtn.setAttribute("aria-label", t("moveOut"));
   applyColor(item.color);
   setLock(item.locked);
@@ -62,6 +65,9 @@ export function create(data = {}) {
     const locked = wrapper.dataset.locked === "true";
     setLock(!locked);
     Store.patch(id, { locked: wrapper.dataset.locked === "true" });
+  });
+  moveInBtn.addEventListener("click", () => {
+    wrapper.dispatchEvent(new CustomEvent("movein", { bubbles: true }));
   });
   moveOutBtn.addEventListener("click", () => {
     wrapper.dispatchEvent(new CustomEvent("moveout", { bubbles: true }));
