@@ -2,6 +2,8 @@ import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
 
+const MAX_COLS = 3;
+
 export function create(data = {}) {
   const item = {
     type: "container-native",
@@ -25,7 +27,11 @@ export function create(data = {}) {
         <button class="add-card" aria-label="Add card">+</button>
         <button class="delete" aria-label="Delete">🗑️</button>
       </div>
-      <div class="collapse__body native-grid"></div>
+      <div class="collapse__body">
+        <div class="card-wrapper">
+          <div class="native-grid"></div>
+        </div>
+      </div>
     </div>`;
 
   const content = wrapper.firstElementChild;
@@ -34,6 +40,7 @@ export function create(data = {}) {
   const addBtn = content.querySelector("button.add-card");
   const delBtn = content.querySelector("button.delete");
   const bodyEl = content.querySelector(".collapse__body");
+  const wrapperEl = content.querySelector(".card-wrapper");
   const gridEl = content.querySelector(".native-grid");
 
   toggleBtn.setAttribute("aria-label", t("toggle"));
@@ -50,9 +57,10 @@ export function create(data = {}) {
     if (!parentGrid) return;
     if (bodyEl.style.display === "none") return;
     const cellW = parentGrid.cellWidth();
+    wrapperEl.style.maxWidth = `${cellW * MAX_COLS}px`;
     const width = gridEl.clientWidth;
     let cols = Math.round(width / cellW);
-    cols = Math.max(1, Math.min(12, cols));
+    cols = Math.max(1, Math.min(MAX_COLS, cols));
     gridEl.style.setProperty("--cols", cols);
     const cell = width / cols;
     gridEl.style.gridAutoRows = `${cell}px`;
