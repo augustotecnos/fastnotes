@@ -56,17 +56,18 @@ body{margin:0;font-family:sans-serif}
 .container .collapse__header{display:flex;align-items:center;gap:.25rem}
 .container .collapse__header h6{flex:1}
 .container .collapse__header button{background:none;border:none;cursor:pointer}
-.container .collapse__body{overflow-y:auto;overflow-x:hidden}
+.container .collapse__body{overflow-y:auto;overflow-x:hidden;padding:8px}
 .container .collapse__body::-webkit-scrollbar{width:8px}
 .container .collapse__body::-webkit-scrollbar-thumb{background:#007bff;border-radius:4px}
 .container .subgrid{min-height:100px}
 .container .native-grid{
   display:grid;
-  gap:8px;
+  gap:16px;
   grid-template-columns:repeat(var(--cols,3),1fr);
   grid-auto-rows:100px;
   min-height:100px
 }
+.container .native-grid>[gs-id]{min-width:350px;min-height:350px}
 .container.collapsed{min-height:100px;height:100px;overflow:hidden;position:relative}
 .container.collapsed .collapse__body{display:none}
 .container.collapsed::after{
