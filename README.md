@@ -113,3 +113,8 @@ i18n.setLanguage("pt");
 
 Container buttons and the default container title now use translation keys.
 
+## VPN Automation Scripts
+
+Example PowerShell scripts for managing OpenVPN connections are available in the `scripts` directory. `Verifica-VPN.ps1` checks network conditions and starts or stops the VPN service, while `Implantar-VPN-Automatica.ps1` illustrates how to deploy the checker across multiple machines.
+
+
