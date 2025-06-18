@@ -53,6 +53,8 @@ export function create(data = {}) {
     let cols = Math.round(width / cellW);
     cols = Math.max(1, Math.min(12, cols));
     gridEl.style.setProperty("--cols", cols);
+    const cell = width / cols;
+    gridEl.style.gridAutoRows = `${cell}px`;
     adjustHeight();
   }
 
