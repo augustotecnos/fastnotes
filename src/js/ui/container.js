@@ -72,6 +72,9 @@ export function create(data = {}) {
     if (cols < 1) cols = 1;
     if (cols > 12) cols = 12;
     if (subgrid.opts.column !== cols) subgrid.column(cols);
+    // keep the inner grid row height in sync with the parent grid
+    const cellH = parentGrid.getCellHeight();
+    if (subgrid.opts.cellHeight !== cellH) subgrid.cellHeight(cellH);
     adjustHeight();
   }
   const ro = new ResizeObserver(updateColumns);
