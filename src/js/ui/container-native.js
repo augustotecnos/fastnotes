@@ -1,6 +1,7 @@
 import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
+import interact from "interactjs";
 
 const MAX_COLS = 12;
 
@@ -103,21 +104,7 @@ export function create(data = {}) {
     }
   });
 
-  gridEl.addEventListener("dragover", (e) => {
-    if (!dragEl) return;
-    e.preventDefault();
-    const target = e.target.closest("[gs-id]");
-    if (!target || target === dragEl) return;
-    const rect = target.getBoundingClientRect();
-    const next = e.clientY - rect.top > rect.height / 2;
-    gridEl.insertBefore(dragEl, next ? target.nextSibling : target);
-  });
-
-  gridEl.addEventListener("drop", () => {
-    dragEl = null;
-    saveChildren();
-    adjustHeight();
-  });
+  // dragover/drop handled by interact.js
 
   gridEl.addEventListener("removed", () => {
     saveChildren();
@@ -148,14 +135,53 @@ export function create(data = {}) {
   }
 
   function initCard(el, opts = {}) {
-    el.draggable = true;
     el.dataset.w = opts.w || 1;
     el.dataset.h = opts.h || 1;
     applySize(el);
-    el.addEventListener("dragstart", onDragStart);
+    interact(el)
+      .draggable({
+        listeners: {
+          start() {
+            dragEl = el;
+          },
+          move(event) {
+            const target = document
+              .elementFromPoint(event.client.x, event.client.y)
+              ?.closest("[gs-id]");
+            if (!target || target === dragEl || !gridEl.contains(target))
+              return;
+            const rect = target.getBoundingClientRect();
+            const next = event.client.y - rect.top > rect.height / 2;
+            gridEl.insertBefore(dragEl, next ? target.nextSibling : target);
+          },
+          end() {
+            dragEl = null;
+            saveChildren();
+            adjustHeight();
+          },
+        },
+      })
+      .resizable({
+        edges: { bottom: true, right: true },
+        listeners: {
+          move(event) {
+            const cols =
+              parseInt(getComputedStyle(gridEl).getPropertyValue("--cols")) ||
+              1;
+            const cell = gridEl.clientWidth / cols;
+            const w = Math.max(1, Math.round(event.rect.width / cell));
+            const h = Math.max(1, Math.round(event.rect.height / cell));
+            el.dataset.w = w;
+            el.dataset.h = h;
+            applySize(el);
+            adjustHeight();
+          },
+          end() {
+            saveChildren();
+          },
+        },
+      });
     el.addEventListener("moveout", onMoveOut);
-    const handle = el.querySelector(".resize-handle");
-    if (handle) handle.addEventListener("pointerdown", startResize);
     const textarea = el.querySelector("textarea");
     if (textarea) textarea.addEventListener("input", () => autoHeight(el));
   }
@@ -179,36 +205,7 @@ export function create(data = {}) {
     }
   }
 
-  function startResize(e) {
-    e.preventDefault();
-    const el = e.target.closest("[gs-id]");
-    const startW = parseInt(el.dataset.w || 1);
-    const startH = parseInt(el.dataset.h || 1);
-    const startX = e.clientX;
-    const startY = e.clientY;
-    const cols =
-      parseInt(getComputedStyle(gridEl).getPropertyValue("--cols")) || 1;
-    const cell = gridEl.clientWidth / cols;
-    function onMove(ev) {
-      const w = Math.max(1, Math.round(startW + (ev.clientX - startX) / cell));
-      const h = Math.max(1, Math.round(startH + (ev.clientY - startY) / cell));
-      el.dataset.w = w;
-      el.dataset.h = h;
-      applySize(el);
-      adjustHeight();
-    }
-    function onUp() {
-      document.removeEventListener("pointermove", onMove);
-      document.removeEventListener("pointerup", onUp);
-      saveChildren();
-    }
-    document.addEventListener("pointermove", onMove);
-    document.addEventListener("pointerup", onUp);
-  }
-
-  function onDragStart(e) {
-    dragEl = e.currentTarget;
-  }
+  // resizing handled by interact.js
 
   function onMoveOut(e) {
     const el = e.currentTarget;
