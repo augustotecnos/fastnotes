@@ -63,6 +63,7 @@ export function create(data = {}) {
     gridEl.style.setProperty("--cols", cols);
     const cell = width / cols;
     gridEl.style.gridAutoRows = `${cell}px`;
+    Array.from(gridEl.children).forEach((c) => autoHeight(c));
     adjustHeight();
   }
 
@@ -80,6 +81,7 @@ export function create(data = {}) {
     const el = createCard({ parent: id });
     gridEl.appendChild(el);
     initCard(el);
+    autoHeight(el);
     saveChildren();
     adjustHeight();
   });
@@ -95,6 +97,7 @@ export function create(data = {}) {
     if (!gridEl.contains(el)) {
       gridEl.appendChild(el);
       initCard(el);
+      autoHeight(el);
       saveChildren();
       adjustHeight();
     }
@@ -139,6 +142,7 @@ export function create(data = {}) {
         const el = createCard(child);
         gridEl.appendChild(el);
         initCard(el, opts);
+        autoHeight(el);
       });
     }
   }
