@@ -21,7 +21,7 @@ export function create(data = {}) {
   wrapper.setAttribute("gs-id", id);
   wrapper.dataset.parent = item.parent;
   wrapper.innerHTML = `
-    <div class="grid-stack-item-content container">
+    <div class="grid-stack-item-content container" style="max-height:800px">
       <div class="collapse__header">
         <button class="toggle" aria-label="Toggle">▾</button>
         <h6 contenteditable="true"></h6>
