@@ -8,8 +8,6 @@ import * as Auth from "./drive/auth.js";
 import * as Drive from "./drive/sync.js";
 import { t, getLanguage } from "./i18n.js";
 
-const MAX_CONTAINER_PX = 700;
-
 let dragItem = null;
 
 function attachGridEvents(g) {
@@ -28,21 +26,8 @@ function attachGridEvents(g) {
   });
 
   g.on("resizestop", (_e, el) => {
-    enforceMaxHeight(g, el);
     if (g === grid) saveLayout();
   });
-}
-
-function enforceMaxHeight(g, el) {
-  if (!el || !el.querySelector(".container")) return;
-  const cellH = g.getCellHeight();
-  if (!cellH) return;
-  const node = el.gridstackNode;
-  if (!node) return;
-  const maxRows = Math.ceil(MAX_CONTAINER_PX / cellH);
-  if (node.h > maxRows) {
-    g.update(el, { h: maxRows });
-  }
 }
 
 const grid = GridStack.init(
