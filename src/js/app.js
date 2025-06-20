@@ -48,7 +48,7 @@ function enforceMaxHeight(g, el) {
 
 const grid = GridStack.init(
   {
-    margin: 8,
+    margin: 4,
     column: 12,
     float: false,
     resizable: { handles: "e, se, s, w" },
