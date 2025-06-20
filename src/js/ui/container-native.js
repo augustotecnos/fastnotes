@@ -246,7 +246,7 @@ export function create(data = {}) {
     if (!parentGrid) return;
     const cellH = parentGrid.getCellHeight();
     if (!cellH) return;
-    const newH = Math.max(1, Math.ceil(content.offsetHeight / cellH));
+    const newH = Math.max(1, Math.ceil(content.scrollHeight / cellH));
     parentGrid.update(wrapper, { h: newH });
     parentGrid.save();
   }
