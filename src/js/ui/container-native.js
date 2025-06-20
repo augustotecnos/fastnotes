@@ -71,10 +71,9 @@ export function create(data = {}) {
     const parentGrid = wrapper.closest(".grid-stack")?.gridstack;
     if (!parentGrid) return;
     if (bodyEl.style.display === "none") return;
-    const cellW = parentGrid.cellWidth();
     const width = gridEl.clientWidth;
     if (!width) return;
-    let cols = Math.round(width / cellW);
+    let cols = Math.floor(width / MIN_CARD_WIDTH_PX);
     cols = Math.max(1, Math.min(MAX_COLS, cols));
     gridEl.style.setProperty("--cols", cols);
     gridEl.style.gridAutoRows = `${MIN_CARD_HEIGHT_PX}px`;

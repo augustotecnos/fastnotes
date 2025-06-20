@@ -65,7 +65,7 @@ export function create(data = {}) {
   function updateColumns() {
     if (bodyEl.style.display === "none") return;
     const width = subEl.clientWidth;
-    let cols = Math.round(width / CARD_SIZE);
+    let cols = Math.floor(width / CARD_SIZE);
     cols = Math.max(1, cols);
     if (subgrid.opts.column !== cols) subgrid.column(cols);
     if (subgrid.opts.cellHeight !== CARD_SIZE) subgrid.cellHeight(CARD_SIZE);
