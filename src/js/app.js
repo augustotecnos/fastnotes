@@ -122,7 +122,6 @@ function addCard(data = { x: 0, y: 0, w: 3, h: 2 }, g = grid, parent = "root") {
 function addContainer(data = { x: 0, y: 0, w: 6, h: 4 }) {
   const added = createContainer({});
   grid.addWidget(added.el, data);
-  attachGridEvents(added.grid);
   added.adjust();
   saveLayout();
 }
@@ -162,13 +161,12 @@ grid.el.addEventListener("movein", (e) => {
     else return;
   }
   const targetEl = document.querySelector(`[gs-id="${targetId}"]`);
-  const subEl = targetEl?.querySelector(".subgrid");
-  const subgrid = subEl?.gridstack;
-  if (!subgrid) return;
+  const gridEl = targetEl?.querySelector(".native-grid");
+  if (!gridEl) return;
   grid.removeWidget(cardEl);
   GridStack.Utils.removePositioningStyles(cardEl);
   cardEl.classList.remove("grid-stack-item");
-  subgrid.addWidget(cardEl, { x: 0, y: 0, w: 3, h: 2 });
+  gridEl.appendChild(cardEl);
   cardEl.dataset.parent = targetId;
   Store.setParent(cardEl.getAttribute("gs-id"), targetId);
   targetEl.dispatchEvent(
@@ -221,7 +219,6 @@ async function restore() {
       if (data.type === "container") {
         added = createContainer(data);
         grid.addWidget(added.el, opts);
-        attachGridEvents(added.grid);
         added.adjust();
       } else if (data.type === "folder") {
         const el = createFolder(data);
