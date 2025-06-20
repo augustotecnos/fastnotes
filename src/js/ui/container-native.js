@@ -59,10 +59,12 @@ export function create(data = {}) {
     if (bodyEl.style.display === "none") return;
     const cellW = parentGrid.cellWidth();
     const width = gridEl.clientWidth;
+    if (!width) return;
     let cols = Math.round(width / cellW);
     cols = Math.max(1, Math.min(MAX_COLS, cols));
     gridEl.style.setProperty("--cols", cols);
     const cell = width / cols;
+    if (!cell) return;
     gridEl.style.gridAutoRows = `${cell}px`;
     Array.from(gridEl.children).forEach((c) => autoHeight(c));
     adjustHeight();
@@ -169,6 +171,7 @@ export function create(data = {}) {
               parseInt(getComputedStyle(gridEl).getPropertyValue("--cols")) ||
               1;
             const cell = gridEl.clientWidth / cols;
+            if (!cell) return;
             const w = Math.max(1, Math.round(event.rect.width / cell));
             const h = Math.max(1, Math.round(event.rect.height / cell));
             el.dataset.w = w;
@@ -195,6 +198,7 @@ export function create(data = {}) {
     const cols =
       parseInt(getComputedStyle(gridEl).getPropertyValue("--cols")) || 1;
     const cell = gridEl.clientWidth / cols;
+    if (!cell) return;
     const content = el.firstElementChild;
     const newH = Math.max(1, Math.ceil(content.offsetHeight / cell));
     if (newH !== parseInt(el.dataset.h)) {
@@ -256,6 +260,7 @@ export function create(data = {}) {
     const parentGrid = wrapper.closest(".grid-stack")?.gridstack;
     if (!parentGrid) return;
     const cellH = parentGrid.getCellHeight();
+    if (!cellH) return;
     const newH = Math.max(1, Math.ceil(content.offsetHeight / cellH));
     parentGrid.update(wrapper, { h: newH });
     parentGrid.save();
