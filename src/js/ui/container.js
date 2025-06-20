@@ -1,6 +1,10 @@
+import { GridStack } from "gridstack";
 import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
+
+const MIN_WIDTH = 200;
+const CARD_HEIGHT = 300;
 
 class Container {
   constructor(data = {}) {
@@ -8,6 +12,7 @@ class Container {
       type: "container",
       title: data.title || t("containerDefault"),
       children: data.children || [],
+      layout: data.layout || [],
       collapsed: data.collapsed || false,
       id: data.id,
       parent: data.parent || "root",
@@ -25,15 +30,18 @@ class Container {
           <button class="add-card" aria-label="${t("addCard")}">+</button>
           <button class="delete" aria-label="${t("delete")}">🗑️</button>
         </div>
-        <div class="container-body native-grid"></div>
+        <div class="container-body">
+          <div class="grid-stack subgrid"></div>
+        </div>
       </div>`;
 
     this.content = this.wrapper.firstElementChild;
     this.titleEl = this.content.querySelector("h6");
-    this.bodyEl = this.content.querySelector(".container-body");
     this.toggleBtn = this.content.querySelector("button.toggle");
     this.addBtn = this.content.querySelector("button.add-card");
-    this.deleteBtn = this.content.querySelector("button.delete");
+    this.delBtn = this.content.querySelector("button.delete");
+    this.bodyEl = this.content.querySelector(".container-body");
+    this.subEl = this.content.querySelector(".subgrid");
 
     this.titleEl.textContent = this.item.title;
     this.titleEl.addEventListener("input", () => {
@@ -44,36 +52,74 @@ class Container {
       this.setCollapsed(!this.item.collapsed),
     );
     this.addBtn.addEventListener("click", () => this.addCard());
-    this.deleteBtn.addEventListener("click", () => this.remove());
+    this.delBtn.addEventListener("click", () => this.remove());
+
+    this.subgrid = GridStack.init(
+      {
+        margin: 8,
+        column: 1,
+        float: false,
+        resizable: { handles: "e, se, s, w" },
+        acceptWidgets: true,
+        dragOut: true,
+        subGrid: true,
+      },
+      this.subEl,
+    );
+
+    this.subgrid.on("change", () => {
+      this.item.layout = this.subgrid.save();
+      Store.patch(this.id, {
+        layout: this.item.layout,
+        children: this.item.children,
+      });
+      this.adjustHeight();
+    });
 
     this.wrapper.addEventListener("childadded", (e) => {
       const el = e.detail.el;
-      if (!this.bodyEl.contains(el)) {
-        this.bodyEl.appendChild(el);
+      if (!this.subEl.contains(el)) {
+        this.subgrid.addWidget(el, { w: 1, h: 1, autoPosition: true });
         this.item.children.push(el.getAttribute("gs-id"));
         Store.patch(this.id, { children: this.item.children });
         this.adjustHeight();
       }
     });
 
-    this.bodyEl.addEventListener("removed", () => {
-      this.item.children = Array.from(this.bodyEl.children).map((c) =>
-        c.getAttribute("gs-id"),
-      );
-      Store.patch(this.id, { children: this.item.children });
+    this.subEl.addEventListener("removed", () => {
+      this.item.layout = this.subgrid.save();
+      this.item.children = this.item.layout.map((c) => c.id);
+      Store.patch(this.id, {
+        children: this.item.children,
+        layout: this.item.layout,
+      });
       this.adjustHeight();
     });
 
-    this.restoreChildren();
+    const ro = new ResizeObserver(() => this.updateColumns());
+    ro.observe(this.subEl);
+    setTimeout(() => {
+      this.restoreChildren();
+      this.updateColumns();
+      this.adjustHeight();
+    });
+
     this.setCollapsed(this.item.collapsed);
+  }
+
+  updateColumns() {
+    if (this.bodyEl.style.display === "none") return;
+    const width = this.subEl.clientWidth;
+    let cols = Math.max(1, Math.floor(width / MIN_WIDTH));
+    if (this.subgrid.opts.column !== cols) this.subgrid.column(cols);
+    if (this.subgrid.opts.cellHeight !== CARD_HEIGHT)
+      this.subgrid.cellHeight(CARD_HEIGHT);
+    this.adjustHeight();
   }
 
   addCard() {
     const el = createCard({ parent: this.id });
-    this.bodyEl.appendChild(el);
-    this.item.children.push(el.getAttribute("gs-id"));
-    Store.patch(this.id, { children: this.item.children });
-    this.adjustHeight();
+    this.subgrid.addWidget(el, { w: 1, h: 1, autoPosition: true });
   }
 
   adjustHeight() {
@@ -87,12 +133,16 @@ class Container {
   }
 
   setCollapsed(flag) {
-    this.item.collapsed = flag;
     this.bodyEl.style.display = flag ? "none" : "";
+    this.content.style.minHeight = flag ? "100px" : "";
     this.toggleBtn.textContent = flag ? "▸" : "▾";
+    this.item.collapsed = flag;
     this.content.classList.toggle("collapsed", flag);
     Store.patch(this.id, { collapsed: flag });
-    this.adjustHeight();
+    setTimeout(() => {
+      this.adjustHeight();
+      if (!flag) this.updateColumns();
+    }, 300);
   }
 
   remove() {
@@ -102,20 +152,37 @@ class Container {
   }
 
   restoreChildren() {
-    if (!this.item.children.length) return;
-    this.bodyEl.innerHTML = "";
-    this.item.children.forEach((cid) => {
-      const child = Store.data.items[cid];
-      if (!child) return;
-      const el = createCard(child);
-      this.bodyEl.appendChild(el);
-    });
+    if (this.item.layout.length) {
+      this.subgrid.removeAll();
+      this.item.layout.forEach((opts) => {
+        const child = Store.data.items[opts.id];
+        if (!child) return;
+        let el;
+        if (child.type === "card") el = createCard(child);
+        if (el)
+          this.subgrid.addWidget(el, {
+            x: opts.x,
+            y: opts.y,
+            w: 1,
+            h: 1,
+            id: opts.id,
+          });
+      });
+    } else if (this.item.children.length) {
+      this.item.children.forEach((cid) => {
+        const child = Store.data.items[cid];
+        if (!child) return;
+        const el = createCard(child);
+        this.subgrid.addWidget(el, { w: 1, h: 1, autoPosition: true });
+      });
+    }
   }
 
   reset() {
     this.item.children = [];
-    this.bodyEl.innerHTML = "";
-    Store.patch(this.id, { children: [] });
+    this.item.layout = [];
+    this.subgrid.removeAll();
+    Store.patch(this.id, { children: [], layout: [] });
     this.setCollapsed(false);
     this.adjustHeight();
   }
@@ -126,8 +193,5 @@ export function create(data) {
   return {
     el: c.wrapper,
     adjust: () => c.adjustHeight(),
-    setCollapsed: (f) => c.setCollapsed(f),
-    reset: () => c.reset(),
   };
 }
-
