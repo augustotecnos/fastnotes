@@ -8,8 +8,8 @@ const MAX_COLS = 12;
 const MAX_HEIGHT_PX = 700;
 const MIN_CARD_WIDTH_PX = 400;
 const MAX_CARD_WIDTH_PX = 500;
-const MIN_CARD_HEIGHT_PX = 400;
-const MAX_CARD_HEIGHT_PX = 400;
+const MIN_CARD_HEIGHT_PX = 200;
+const MAX_CARD_HEIGHT_PX = 200;
 
 export function create(data = {}) {
   const item = {
