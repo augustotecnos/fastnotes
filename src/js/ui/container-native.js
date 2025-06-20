@@ -31,7 +31,7 @@ export function create(data = {}) {
       </div>
       <div class="collapse__body">
         <div class="card-wrapper">
-          <div class="native-grid" style="max-height: 800px"></div>
+          <div class="native-grid"></div>
         </div>
       </div>
     </div>`;
