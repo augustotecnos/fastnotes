@@ -4,6 +4,7 @@ import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
 
 const MAX_HEIGHT_PX = 700;
+const CARD_SIZE = 400;
 
 export function create(data = {}) {
   const item = {
@@ -51,25 +52,23 @@ export function create(data = {}) {
   const subgrid = GridStack.init(
     {
       margin: 8,
-      column: 12,
+      column: 1,
       float: false,
       acceptWidgets: true,
       dragOut: true,
       subGrid: true,
+      disableResize: true,
+      cellHeight: CARD_SIZE,
     },
     subEl,
   );
   function updateColumns() {
-    const parentGrid = wrapper.closest(".grid-stack")?.gridstack;
-    if (!parentGrid) return;
     if (bodyEl.style.display === "none") return;
-    const cellW = parentGrid.cellWidth();
     const width = subEl.clientWidth;
-    let cols = Math.round(width / cellW);
-    cols = Math.max(1, Math.min(12, cols));
+    let cols = Math.round(width / CARD_SIZE);
+    cols = Math.max(1, cols);
     if (subgrid.opts.column !== cols) subgrid.column(cols);
-    const cellH = parentGrid.getCellHeight();
-    if (subgrid.opts.cellHeight !== cellH) subgrid.cellHeight(cellH);
+    if (subgrid.opts.cellHeight !== CARD_SIZE) subgrid.cellHeight(CARD_SIZE);
     adjustHeight();
   }
   const ro = new ResizeObserver(updateColumns);
@@ -87,7 +86,7 @@ export function create(data = {}) {
 
   addBtn.addEventListener("click", () => {
     const el = createCard({ parent: id });
-    subgrid.addWidget(el, { x: 0, y: 0, w: 3, h: 2 });
+    subgrid.addWidget(el, { x: 0, y: 0, w: 1, h: 1 });
   });
 
   delBtn.addEventListener("click", () => {
@@ -104,14 +103,15 @@ export function create(data = {}) {
         if (!child) return;
         let el;
         if (child.type === "card") el = createCard(child);
-        if (el) subgrid.addWidget(el, opts);
+        if (el)
+          subgrid.addWidget(el, { x: opts.x, y: opts.y, w: 1, h: 1, id: opts.id });
       });
     } else if (item.children.length) {
       item.children.forEach((cid) => {
         const child = Store.data.items[cid];
         if (!child) return;
         const el = createCard(child);
-        subgrid.addWidget(el, { x: 0, y: 0, w: 3, h: 2 });
+        subgrid.addWidget(el, { x: 0, y: 0, w: 1, h: 1 });
       });
     }
   }
