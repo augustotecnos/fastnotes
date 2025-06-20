@@ -54,6 +54,7 @@ body{margin:0;font-family:sans-serif}
   position:absolute;right:2px;bottom:2px;width:12px;height:12px;
   background:#007bff50;border-radius:2px;cursor:se-resize;
 }
+.subgrid .resize-handle{display:none}
 
 .container{transition:min-height .3s ease;}
 .container .collapse__header{display:flex;align-items:center;gap:.25rem}
