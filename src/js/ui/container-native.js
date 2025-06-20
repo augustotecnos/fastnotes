@@ -5,6 +5,7 @@ import interact from "interactjs";
 import Sortable from "sortablejs";
 
 const MAX_COLS = 12;
+const MAX_HEIGHT_PX = 700;
 
 export function create(data = {}) {
   const item = {
@@ -22,7 +23,7 @@ export function create(data = {}) {
   wrapper.setAttribute("gs-id", id);
   wrapper.dataset.parent = item.parent;
   wrapper.innerHTML = `
-    <div class="grid-stack-item-content container" style="max-height:800px">
+    <div class="grid-stack-item-content container" style="max-height:${MAX_HEIGHT_PX}px">
       <div class="collapse__header">
         <button class="toggle" aria-label="Toggle">▾</button>
         <h6 contenteditable="true"></h6>
@@ -247,7 +248,11 @@ export function create(data = {}) {
     if (!parentGrid) return;
     const cellH = parentGrid.getCellHeight();
     if (!cellH) return;
-    const newH = Math.max(1, Math.ceil(content.offsetHeight / cellH));
+    const maxRows = Math.ceil(MAX_HEIGHT_PX / cellH);
+    const newH = Math.min(
+      maxRows,
+      Math.max(1, Math.ceil(content.offsetHeight / cellH)),
+    );
     parentGrid.update(wrapper, { h: newH });
     parentGrid.save();
   }
