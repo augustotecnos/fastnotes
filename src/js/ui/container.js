@@ -4,7 +4,8 @@ import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
 
 const MAX_HEIGHT_PX = 700;
-const CARD_SIZE = 400;
+// Base width/height for cards within a container
+const CARD_SIZE = 300;
 
 export function create(data = {}) {
   const item = {

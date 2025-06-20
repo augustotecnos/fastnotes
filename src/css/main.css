@@ -64,7 +64,7 @@ body{margin:0;font-family:sans-serif}
 .container .collapse__body::-webkit-scrollbar{width:8px}
 .container .collapse__body::-webkit-scrollbar-thumb{background:#007bff;border-radius:4px}
 .container .subgrid{min-height:100px}
-.container .subgrid>.grid-stack-item{min-width:400px;max-width:500px}
+.container .subgrid>.grid-stack-item{min-width:300px;max-width:400px}
 .container.collapsed{min-height:100px;height:100px;overflow:hidden;position:relative}
 .container.collapsed .collapse__body{display:none}
 .container.collapsed::after{
