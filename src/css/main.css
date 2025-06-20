@@ -77,9 +77,10 @@ body{margin:0;font-family:sans-serif}
   max-height:700px;
 }
 .container .native-grid>[gs-id]{
-  min-width:0;
-  min-height:500px;
-  height:500px;
+  min-width:400px;
+  max-width:500px;
+  min-height:400px;
+  max-height:600px;
 }
 .container.collapsed{min-height:100px;height:100px;overflow:hidden;position:relative}
 .container.collapsed .collapse__body{display:none}

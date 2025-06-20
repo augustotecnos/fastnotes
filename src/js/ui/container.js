@@ -6,6 +6,10 @@ import Sortable from "sortablejs";
 
 const MAX_COLS = 12;
 const MAX_HEIGHT_PX = 700;
+const MIN_CARD_WIDTH_PX = 400;
+const MAX_CARD_WIDTH_PX = 500;
+const MIN_CARD_HEIGHT_PX = 400;
+const MAX_CARD_HEIGHT_PX = 600;
 
 export function create(data = {}) {
   const item = {
@@ -141,6 +145,12 @@ export function create(data = {}) {
     interact(el)
       .resizable({
         edges: { bottom: true, right: true },
+        modifiers: [
+          interact.modifiers.restrictSize({
+            min: { width: MIN_CARD_WIDTH_PX, height: MIN_CARD_HEIGHT_PX },
+            max: { width: MAX_CARD_WIDTH_PX, height: MAX_CARD_HEIGHT_PX },
+          }),
+        ],
         listeners: {
           move(event) {
             const cols =
