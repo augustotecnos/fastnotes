@@ -2,6 +2,7 @@ import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
 import interact from "interactjs";
+import Sortable from "sortablejs";
 
 const MAX_COLS = 12;
 
@@ -44,6 +45,14 @@ export function create(data = {}) {
   const wrapperEl = content.querySelector(".card-wrapper");
   const gridEl = content.querySelector(".native-grid");
 
+  const sortable = new Sortable(gridEl, {
+    animation: 150,
+    onEnd() {
+      saveChildren();
+      adjustHeight();
+    },
+  });
+
   toggleBtn.setAttribute("aria-label", t("toggle"));
   addBtn.setAttribute("aria-label", t("addCard"));
   delBtn.setAttribute("aria-label", t("delete"));
@@ -78,7 +87,6 @@ export function create(data = {}) {
     adjustHeight();
   });
 
-  let dragEl = null;
 
   addBtn.addEventListener("click", () => {
     const el = createCard({ parent: id });
@@ -141,28 +149,6 @@ export function create(data = {}) {
     el.dataset.h = opts.h || 1;
     applySize(el);
     interact(el)
-      .draggable({
-        listeners: {
-          start() {
-            dragEl = el;
-          },
-          move(event) {
-            const target = document
-              .elementFromPoint(event.client.x, event.client.y)
-              ?.closest("[gs-id]");
-            if (!target || target === dragEl || !gridEl.contains(target))
-              return;
-            const rect = target.getBoundingClientRect();
-            const next = event.client.y - rect.top > rect.height / 2;
-            gridEl.insertBefore(dragEl, next ? target.nextSibling : target);
-          },
-          end() {
-            dragEl = null;
-            saveChildren();
-            adjustHeight();
-          },
-        },
-      })
       .resizable({
         edges: { bottom: true, right: true },
         listeners: {
