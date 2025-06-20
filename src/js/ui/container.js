@@ -4,7 +4,7 @@ import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
 
 const MIN_WIDTH = 200;
-const CARD_HEIGHT = 300;
+const DEFAULT_HEIGHT = 300;
 
 class Container {
   constructor(data = {}) {
@@ -82,6 +82,7 @@ class Container {
         this.subgrid.addWidget(el, { w: 1, h: 1, autoPosition: true });
         this.item.children.push(el.getAttribute("gs-id"));
         Store.patch(this.id, { children: this.item.children });
+        this.updateColumns();
         this.adjustHeight();
       }
     });
@@ -93,10 +94,12 @@ class Container {
         children: this.item.children,
         layout: this.item.layout,
       });
+      this.updateColumns();
       this.adjustHeight();
     });
 
     const ro = new ResizeObserver(() => this.updateColumns());
+    ro.observe(this.wrapper);
     ro.observe(this.subEl);
     setTimeout(() => {
       this.restoreChildren();
@@ -112,14 +115,18 @@ class Container {
     const width = this.subEl.clientWidth;
     let cols = Math.max(1, Math.floor(width / MIN_WIDTH));
     if (this.subgrid.opts.column !== cols) this.subgrid.column(cols);
-    if (this.subgrid.opts.cellHeight !== CARD_HEIGHT)
-      this.subgrid.cellHeight(CARD_HEIGHT);
+    const parentGrid = this.wrapper.closest(".grid-stack")?.gridstack;
+    const height = parentGrid?.getCellHeight() || DEFAULT_HEIGHT;
+    if (this.subgrid.opts.cellHeight !== height)
+      this.subgrid.cellHeight(height);
     this.adjustHeight();
   }
 
   addCard() {
     const el = createCard({ parent: this.id });
     this.subgrid.addWidget(el, { w: 1, h: 1, autoPosition: true });
+    this.updateColumns();
+    this.adjustHeight();
   }
 
   adjustHeight() {
