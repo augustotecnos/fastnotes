@@ -126,7 +126,6 @@ function addContainer(data = { x: 0, y: 0, w: 6, h: 4 }) {
   saveLayout();
 }
 
-
 function addFolder(data = { x: 0, y: 0, w: 3, h: 3 }) {
   const el = createFolder({});
   grid.addWidget(el, data);
@@ -161,7 +160,7 @@ grid.el.addEventListener("movein", (e) => {
     else return;
   }
   const targetEl = document.querySelector(`[gs-id="${targetId}"]`);
-  const gridEl = targetEl?.querySelector(".native-grid");
+  const gridEl = targetEl?.querySelector(".subgrid");
   if (!gridEl) return;
   grid.removeWidget(cardEl);
   GridStack.Utils.removePositioningStyles(cardEl);
