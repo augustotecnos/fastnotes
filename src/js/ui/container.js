@@ -3,8 +3,9 @@ import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
 
-// Base width/height for cards within a container
-const CARD_SIZE = 300;
+// Base dimensions for cards within a container
+const CARD_MIN_WIDTH = 200;
+const CARD_HEIGHT = 300;
 
 export function create(data = {}) {
   const item = {
@@ -58,17 +59,17 @@ export function create(data = {}) {
       dragOut: true,
       subGrid: true,
       disableResize: true,
-      cellHeight: CARD_SIZE,
+      cellHeight: CARD_HEIGHT,
     },
     subEl,
   );
   function updateColumns() {
     if (bodyEl.style.display === "none") return;
     const width = subEl.clientWidth;
-    let cols = Math.floor(width / CARD_SIZE);
+    let cols = Math.floor(width / CARD_MIN_WIDTH);
     cols = Math.max(1, cols);
     if (subgrid.opts.column !== cols) subgrid.column(cols);
-    if (subgrid.opts.cellHeight !== CARD_SIZE) subgrid.cellHeight(CARD_SIZE);
+    if (subgrid.opts.cellHeight !== CARD_HEIGHT) subgrid.cellHeight(CARD_HEIGHT);
     adjustHeight();
   }
   const ro = new ResizeObserver(updateColumns);
