@@ -1,10 +1,14 @@
-import { GridStack } from "gridstack";
 import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
+import interact from "interactjs";
+import Sortable from "sortablejs";
 
-const MIN_WIDTH = 200;
-const CARD_HEIGHT = 300;
+const MAX_COLS = 12;
+const MIN_CARD_WIDTH_PX = 300;
+const MAX_CARD_WIDTH_PX = 400;
+const MIN_CARD_HEIGHT_PX = 200;
+const MAX_CARD_HEIGHT_PX = 200;
 
 export function create(data = {}) {
   const item = {
@@ -30,58 +34,66 @@ export function create(data = {}) {
         <button class="delete" aria-label="Delete">🗑️</button>
       </div>
       <div class="collapse__body">
-        <div class="grid-stack subgrid"></div>
+        <div class="card-wrapper">
+          <div class="native-grid"></div>
+        </div>
       </div>
     </div>`;
 
   const content = wrapper.firstElementChild;
   const titleEl = content.querySelector("h6");
-  const toggleBtn = content.querySelector(".toggle");
-  const addBtn = content.querySelector(".add-card");
-  const delBtn = content.querySelector(".delete");
+  const toggleBtn = content.querySelector("button.toggle");
+  const addBtn = content.querySelector("button.add-card");
+  const delBtn = content.querySelector("button.delete");
   const bodyEl = content.querySelector(".collapse__body");
-  const subEl = content.querySelector(".subgrid");
+  const gridEl = content.querySelector(".native-grid");
 
-  titleEl.textContent = item.title;
-  titleEl.addEventListener("input", () => {
-    Store.patch(id, { title: titleEl.textContent });
+  const sortable = new Sortable(gridEl, {
+    animation: 150,
+    onEnd() {
+      saveChildren();
+      adjustHeight();
+    },
   });
 
   toggleBtn.setAttribute("aria-label", t("toggle"));
   addBtn.setAttribute("aria-label", t("addCard"));
   delBtn.setAttribute("aria-label", t("delete"));
 
-  const subgrid = GridStack.init(
-    {
-      margin: 8,
-      column: 1,
-      float: false,
-      acceptWidgets: true,
-      dragOut: true,
-      subGrid: true,
-      disableResize: true,
-      cellHeight: CARD_HEIGHT,
-    },
-    subEl,
-  );
-
-  const ro = new ResizeObserver(updateColumns);
-  ro.observe(subEl);
-  setTimeout(() => {
-    restore();
-    updateColumns();
-    adjustHeight();
+  titleEl.textContent = item.title;
+  titleEl.addEventListener("input", () => {
+    Store.patch(id, { title: titleEl.textContent });
   });
 
-  subgrid.on("change", () => {
-    item.layout = subgrid.save();
-    Store.patch(id, { layout: item.layout });
+  function updateColumns() {
+    const parentGrid = wrapper.closest(".grid-stack")?.gridstack;
+    if (!parentGrid) return;
+    if (bodyEl.style.display === "none") return;
+    const width = gridEl.clientWidth;
+    if (!width) return;
+    let cols = Math.floor(width / MIN_CARD_WIDTH_PX);
+    cols = Math.max(1, Math.min(MAX_COLS, cols));
+    gridEl.style.setProperty("--cols", cols);
+    gridEl.style.gridAutoRows = `${MIN_CARD_HEIGHT_PX}px`;
+    Array.from(gridEl.children).forEach((c) => autoHeight(c));
+    adjustHeight();
+  }
+
+  const ro = new ResizeObserver(updateColumns);
+  ro.observe(gridEl);
+  setTimeout(() => {
+    updateColumns();
+    restoreChildren();
     adjustHeight();
   });
 
   addBtn.addEventListener("click", () => {
     const el = createCard({ parent: id });
-    subgrid.addWidget(el, { w: 1, h: 1, autoPosition: true });
+    gridEl.appendChild(el);
+    initCard(el);
+    autoHeight(el);
+    saveChildren();
+    adjustHeight();
   });
 
   delBtn.addEventListener("click", () => {
@@ -90,34 +102,122 @@ export function create(data = {}) {
     Store.remove(id);
   });
 
-  toggleBtn.addEventListener("click", () => setCollapsed(!item.collapsed));
+  wrapper.addEventListener("childadded", (e) => {
+    const el = e.detail.el;
+    if (!gridEl.contains(el)) {
+      gridEl.appendChild(el);
+      initCard(el);
+      autoHeight(el);
+      saveChildren();
+      adjustHeight();
+    }
+  });
 
-  function restore() {
-    if (item.layout.length) {
-      subgrid.removeAll();
+  gridEl.addEventListener("removed", () => {
+    saveChildren();
+    adjustHeight();
+  });
+
+  function restoreChildren() {
+    if (item.layout.length && !item.children.length) {
       item.layout.forEach((opts) => {
         const child = Store.data.items[opts.id];
         if (!child) return;
-        const el = createCard(child);
-        subgrid.addWidget(el, { x: opts.x, y: opts.y, w: 1, h: 1, id: opts.id });
+        item.children.push(opts.id);
       });
-    } else if (item.children.length) {
+      Store.patch(id, { children: item.children });
+    }
+    if (item.children.length) {
+      gridEl.innerHTML = "";
       item.children.forEach((cid) => {
         const child = Store.data.items[cid];
         if (!child) return;
+        const opts = item.layout.find((o) => o.id === cid) || { w: 1, h: 1 };
         const el = createCard(child);
-        subgrid.addWidget(el, { w: 1, h: 1, autoPosition: true });
+        gridEl.appendChild(el);
+        initCard(el, opts);
+        autoHeight(el);
       });
     }
   }
 
-  function updateColumns() {
-    if (bodyEl.style.display === "none") return;
-    const width = subEl.clientWidth;
-    let cols = Math.max(1, Math.floor(width / MIN_WIDTH));
-    if (subgrid.opts.column !== cols) subgrid.column(cols);
-    if (subgrid.opts.cellHeight !== CARD_HEIGHT) subgrid.cellHeight(CARD_HEIGHT);
-    adjustHeight();
+  function initCard(el, opts = {}) {
+    el.dataset.w = opts.w || 1;
+    el.dataset.h = opts.h || 1;
+    applySize(el);
+    interact(el)
+      .resizable({
+        edges: { bottom: true, right: true },
+        modifiers: [
+          interact.modifiers.restrictSize({
+            min: { width: MIN_CARD_WIDTH_PX, height: MIN_CARD_HEIGHT_PX },
+            max: { width: MAX_CARD_WIDTH_PX, height: MAX_CARD_HEIGHT_PX },
+          }),
+        ],
+        listeners: {
+          move(event) {
+            const cell = MIN_CARD_HEIGHT_PX;
+            const w = Math.max(1, Math.round(event.rect.width / cell));
+            const h = Math.max(1, Math.round(event.rect.height / cell));
+            el.dataset.w = w;
+            el.dataset.h = h;
+            applySize(el);
+            adjustHeight();
+          },
+          end() {
+            saveChildren();
+          },
+        },
+      });
+    el.addEventListener("moveout", onMoveOut);
+    const textarea = el.querySelector("textarea");
+    if (textarea) textarea.addEventListener("input", () => autoHeight(el));
+  }
+
+  function applySize(el) {
+    el.style.gridColumnEnd = `span ${el.dataset.w}`;
+    el.style.gridRowEnd = `span ${el.dataset.h}`;
+  }
+
+  function autoHeight(el) {
+    const content = el.firstElementChild;
+    const newH = Math.max(1, Math.ceil(content.offsetHeight / MIN_CARD_HEIGHT_PX));
+    if (newH !== parseInt(el.dataset.h)) {
+      el.dataset.h = newH;
+      applySize(el);
+      saveChildren();
+      adjustHeight();
+    }
+  }
+
+  function onMoveOut(e) {
+    const el = e.currentTarget;
+    const rootGrid = document.getElementById("grid")?.gridstack;
+    if (!rootGrid) return;
+    gridEl.removeChild(el);
+    rootGrid.addWidget(el, { x: 0, y: 0, w: 3, h: 2 });
+    Store.setParent(el.getAttribute("gs-id"), "root");
+    saveChildren();
+    saveRootLayout();
+  }
+
+  function saveRootLayout() {
+    const rootGrid = document.getElementById("grid")?.gridstack;
+    if (rootGrid) {
+      Store.data.layout = rootGrid.save();
+      Store.save();
+    }
+  }
+
+  function saveChildren() {
+    const arr = Array.from(gridEl.children).map((c) => ({
+      id: c.getAttribute("gs-id"),
+      w: parseInt(c.dataset.w || 1),
+      h: parseInt(c.dataset.h || 1),
+    }));
+    item.layout = arr;
+    item.children = arr.map((o) => o.id);
+    Store.patch(id, { children: item.children, layout: item.layout });
   }
 
   function setCollapsed(flag) {
@@ -133,18 +233,20 @@ export function create(data = {}) {
     }, 300);
   }
 
+  toggleBtn.addEventListener("click", () => setCollapsed(!item.collapsed));
+
   function adjustHeight() {
     const parentGrid = wrapper.closest(".grid-stack")?.gridstack;
     if (!parentGrid) return;
-    const cell = parentGrid.getCellHeight();
-    if (!cell) return;
-    const newH = Math.max(1, Math.ceil(content.scrollHeight / cell));
+    const cellH = parentGrid.getCellHeight();
+    if (!cellH) return;
+    const newH = Math.max(1, Math.ceil(content.scrollHeight / cellH));
     parentGrid.update(wrapper, { h: newH });
     parentGrid.save();
   }
 
   setCollapsed(item.collapsed);
 
-  return { el: wrapper, grid: subgrid, adjust: adjustHeight, setCollapsed };
+  return { el: wrapper, adjust: adjustHeight, setCollapsed };
 }
 
