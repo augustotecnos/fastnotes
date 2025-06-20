@@ -3,8 +3,7 @@ import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
 
-// Base dimensions for cards within a container
-const CARD_MIN_WIDTH = 200;
+const MIN_WIDTH = 200;
 const CARD_HEIGHT = 300;
 
 export function create(data = {}) {
@@ -18,6 +17,7 @@ export function create(data = {}) {
     parent: data.parent || "root",
   };
   const id = Store.upsert(item);
+
   const wrapper = document.createElement("div");
   wrapper.setAttribute("gs-id", id);
   wrapper.dataset.parent = item.parent;
@@ -30,25 +30,26 @@ export function create(data = {}) {
         <button class="delete" aria-label="Delete">🗑️</button>
       </div>
       <div class="collapse__body">
-        <div class="grid-stack subgrid" id="sub-${id}"></div>
+        <div class="grid-stack subgrid"></div>
       </div>
     </div>`;
+
   const content = wrapper.firstElementChild;
   const titleEl = content.querySelector("h6");
-  const toggleBtn = content.querySelector("button.toggle");
-  const addBtn = content.querySelector("button.add-card");
-  const delBtn = content.querySelector("button.delete");
+  const toggleBtn = content.querySelector(".toggle");
+  const addBtn = content.querySelector(".add-card");
+  const delBtn = content.querySelector(".delete");
   const bodyEl = content.querySelector(".collapse__body");
   const subEl = content.querySelector(".subgrid");
-
-  toggleBtn.setAttribute("aria-label", t("toggle"));
-  addBtn.setAttribute("aria-label", t("addCard"));
-  delBtn.setAttribute("aria-label", t("delete"));
 
   titleEl.textContent = item.title;
   titleEl.addEventListener("input", () => {
     Store.patch(id, { title: titleEl.textContent });
   });
+
+  toggleBtn.setAttribute("aria-label", t("toggle"));
+  addBtn.setAttribute("aria-label", t("addCard"));
+  delBtn.setAttribute("aria-label", t("delete"));
 
   const subgrid = GridStack.init(
     {
@@ -63,22 +64,15 @@ export function create(data = {}) {
     },
     subEl,
   );
-  function updateColumns() {
-    if (bodyEl.style.display === "none") return;
-    const width = subEl.clientWidth;
-    let cols = Math.floor(width / CARD_MIN_WIDTH);
-    cols = Math.max(1, cols);
-    if (subgrid.opts.column !== cols) subgrid.column(cols);
-    if (subgrid.opts.cellHeight !== CARD_HEIGHT) subgrid.cellHeight(CARD_HEIGHT);
-    adjustHeight();
-  }
+
   const ro = new ResizeObserver(updateColumns);
   ro.observe(subEl);
   setTimeout(() => {
+    restore();
     updateColumns();
-    restoreChildren();
     adjustHeight();
   });
+
   subgrid.on("change", () => {
     item.layout = subgrid.save();
     Store.patch(id, { layout: item.layout });
@@ -96,16 +90,16 @@ export function create(data = {}) {
     Store.remove(id);
   });
 
-  function restoreChildren() {
+  toggleBtn.addEventListener("click", () => setCollapsed(!item.collapsed));
+
+  function restore() {
     if (item.layout.length) {
       subgrid.removeAll();
       item.layout.forEach((opts) => {
         const child = Store.data.items[opts.id];
         if (!child) return;
-        let el;
-        if (child.type === "card") el = createCard(child);
-        if (el)
-          subgrid.addWidget(el, { x: opts.x, y: opts.y, w: 1, h: 1, id: opts.id });
+        const el = createCard(child);
+        subgrid.addWidget(el, { x: opts.x, y: opts.y, w: 1, h: 1, id: opts.id });
       });
     } else if (item.children.length) {
       item.children.forEach((cid) => {
@@ -115,6 +109,15 @@ export function create(data = {}) {
         subgrid.addWidget(el, { w: 1, h: 1, autoPosition: true });
       });
     }
+  }
+
+  function updateColumns() {
+    if (bodyEl.style.display === "none") return;
+    const width = subEl.clientWidth;
+    let cols = Math.max(1, Math.floor(width / MIN_WIDTH));
+    if (subgrid.opts.column !== cols) subgrid.column(cols);
+    if (subgrid.opts.cellHeight !== CARD_HEIGHT) subgrid.cellHeight(CARD_HEIGHT);
+    adjustHeight();
   }
 
   function setCollapsed(flag) {
@@ -130,14 +133,12 @@ export function create(data = {}) {
     }, 300);
   }
 
-  toggleBtn.addEventListener("click", () => setCollapsed(!item.collapsed));
-
   function adjustHeight() {
     const parentGrid = wrapper.closest(".grid-stack")?.gridstack;
     if (!parentGrid) return;
-    const cellH = parentGrid.getCellHeight();
-    if (!cellH) return;
-    const newH = Math.max(1, Math.ceil(content.scrollHeight / cellH));
+    const cell = parentGrid.getCellHeight();
+    if (!cell) return;
+    const newH = Math.max(1, Math.ceil(content.scrollHeight / cell));
     parentGrid.update(wrapper, { h: newH });
     parentGrid.save();
   }
@@ -146,3 +147,4 @@ export function create(data = {}) {
 
   return { el: wrapper, grid: subgrid, adjust: adjustHeight, setCollapsed };
 }
+

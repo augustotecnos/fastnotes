@@ -53,14 +53,14 @@ body{margin:0;font-family:sans-serif}
 }
 .subgrid .resize-handle{display:none}
 
-.container{transition:min-height .3s ease;}
+.container{transition:min-height .3s ease;width:100%;}
 .container .collapse__header{display:flex;align-items:center;gap:.25rem}
 .container .collapse__header h6{flex:1}
 .container .collapse__header button{background:none;border:none;cursor:pointer}
 .container .collapse__body{overflow-y:auto;overflow-x:hidden;padding:8px}
 .container .collapse__body::-webkit-scrollbar{width:8px}
 .container .collapse__body::-webkit-scrollbar-thumb{background:#007bff;border-radius:4px}
-.container .subgrid{min-height:100px}
+.container .subgrid{min-height:100px;width:100%}
 .container .subgrid>.grid-stack-item{min-width:200px;max-width:400px}
 .container.collapsed{min-height:100px;height:100px;overflow:hidden;position:relative}
 .container.collapsed .collapse__body{display:none}
