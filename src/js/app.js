@@ -157,7 +157,7 @@ document.addEventListener("keydown", navigateCards);
 grid.el.addEventListener("movein", (e) => {
   const cardEl = e.target;
   const containers = Object.values(Store.data.items).filter(
-    (i) => i.type === "container",
+    (i) => i.type === "container" || i.type === "container-native",
   );
   if (!containers.length) return;
   let targetId = containers[0].id;
