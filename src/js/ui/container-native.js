@@ -9,7 +9,7 @@ const MAX_HEIGHT_PX = 700;
 const MIN_CARD_WIDTH_PX = 400;
 const MAX_CARD_WIDTH_PX = 500;
 const MIN_CARD_HEIGHT_PX = 400;
-const MAX_CARD_HEIGHT_PX = 600;
+const MAX_CARD_HEIGHT_PX = 400;
 
 export function create(data = {}) {
   const item = {
@@ -77,9 +77,7 @@ export function create(data = {}) {
     let cols = Math.round(width / cellW);
     cols = Math.max(1, Math.min(MAX_COLS, cols));
     gridEl.style.setProperty("--cols", cols);
-    const cell = width / cols;
-    if (!cell) return;
-    gridEl.style.gridAutoRows = `${cell}px`;
+    gridEl.style.gridAutoRows = `${MIN_CARD_HEIGHT_PX}px`;
     Array.from(gridEl.children).forEach((c) => autoHeight(c));
     adjustHeight();
   }
@@ -164,11 +162,7 @@ export function create(data = {}) {
         ],
         listeners: {
           move(event) {
-            const cols =
-              parseInt(getComputedStyle(gridEl).getPropertyValue("--cols")) ||
-              1;
-            const cell = gridEl.clientWidth / cols;
-            if (!cell) return;
+            const cell = MIN_CARD_HEIGHT_PX;
             const w = Math.max(1, Math.round(event.rect.width / cell));
             const h = Math.max(1, Math.round(event.rect.height / cell));
             el.dataset.w = w;
@@ -192,12 +186,8 @@ export function create(data = {}) {
   }
 
   function autoHeight(el) {
-    const cols =
-      parseInt(getComputedStyle(gridEl).getPropertyValue("--cols")) || 1;
-    const cell = gridEl.clientWidth / cols;
-    if (!cell) return;
     const content = el.firstElementChild;
-    const newH = Math.max(1, Math.ceil(content.offsetHeight / cell));
+    const newH = Math.max(1, Math.ceil(content.offsetHeight / MIN_CARD_HEIGHT_PX));
     if (newH !== parseInt(el.dataset.h)) {
       el.dataset.h = newH;
       applySize(el);
