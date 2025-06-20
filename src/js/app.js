@@ -2,7 +2,6 @@ import { GridStack } from "gridstack";
 import * as Store from "./store.js";
 import { create as createCard } from "./ui/card.js";
 import { create as createContainer } from "./ui/container.js";
-import { create as createNativeContainer } from "./ui/container-native.js";
 import { create as createFolder } from "./ui/folder.js";
 import { registerDriveSync } from "./drive/sync.js";
 import * as Auth from "./drive/auth.js";
@@ -65,7 +64,6 @@ const fab = document.getElementById("fab");
 const fabMain = document.getElementById("fab-main");
 const fabCard = document.getElementById("fab-card");
 const fabContainerBtn = document.getElementById("fab-container");
-const fabContainerNativeBtn = document.getElementById("fab-container-native");
 const fabFolderBtn = document.getElementById("fab-folder");
 
 fabMain.addEventListener("click", toggleMenu);
@@ -75,10 +73,6 @@ fabCard.addEventListener("click", () => {
 });
 fabContainerBtn.addEventListener("click", () => {
   addContainer();
-  toggleMenu(false);
-});
-fabContainerNativeBtn.addEventListener("click", () => {
-  addNativeContainer();
   toggleMenu(false);
 });
 fabFolderBtn.addEventListener("click", () => {
@@ -128,7 +122,7 @@ function toggleMenu(force) {
   const open =
     typeof force === "boolean" ? force : !fab.classList.contains("open");
   fab.classList.toggle("open", open);
-  [fabCard, fabContainerBtn, fabContainerNativeBtn, fabFolderBtn].forEach(
+  [fabCard, fabContainerBtn, fabFolderBtn].forEach(
     (btn) => (btn.disabled = !open),
   );
   if (open) fabCard.focus();
@@ -143,16 +137,11 @@ function addCard(data = { x: 0, y: 0, w: 3, h: 2 }, g = grid, parent = "root") {
 function addContainer(data = { x: 0, y: 0, w: 6, h: 4 }) {
   const added = createContainer({});
   grid.addWidget(added.el, data);
+  attachGridEvents(added.grid);
   added.adjust();
   saveLayout();
 }
 
-function addNativeContainer(data = { x: 0, y: 0, w: 6, h: 4 }) {
-  const added = createNativeContainer({});
-  grid.addWidget(added.el, data);
-  added.adjust();
-  saveLayout();
-}
 
 function addFolder(data = { x: 0, y: 0, w: 3, h: 3 }) {
   const el = createFolder({});
@@ -176,7 +165,7 @@ document.addEventListener("keydown", navigateCards);
 grid.el.addEventListener("movein", (e) => {
   const cardEl = e.target;
   const containers = Object.values(Store.data.items).filter(
-    (i) => i.type === "container" || i.type === "container-native",
+    (i) => i.type === "container",
   );
   if (!containers.length) return;
   let targetId = containers[0].id;
@@ -188,12 +177,13 @@ grid.el.addEventListener("movein", (e) => {
     else return;
   }
   const targetEl = document.querySelector(`[gs-id="${targetId}"]`);
-  const gridEl = targetEl?.querySelector(".native-grid");
-  if (!gridEl) return;
+  const subEl = targetEl?.querySelector(".subgrid");
+  const subgrid = subEl?.gridstack;
+  if (!subgrid) return;
   grid.removeWidget(cardEl);
   GridStack.Utils.removePositioningStyles(cardEl);
   cardEl.classList.remove("grid-stack-item");
-  gridEl.appendChild(cardEl);
+  subgrid.addWidget(cardEl, { x: 0, y: 0, w: 3, h: 2 });
   cardEl.dataset.parent = targetId;
   Store.setParent(cardEl.getAttribute("gs-id"), targetId);
   targetEl.dispatchEvent(
@@ -246,10 +236,7 @@ async function restore() {
       if (data.type === "container") {
         added = createContainer(data);
         grid.addWidget(added.el, opts);
-        added.adjust();
-      } else if (data.type === "container-native") {
-        added = createNativeContainer(data);
-        grid.addWidget(added.el, opts);
+        attachGridEvents(added.grid);
         added.adjust();
       } else if (data.type === "folder") {
         const el = createFolder(data);
