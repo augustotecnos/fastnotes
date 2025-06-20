@@ -18,6 +18,7 @@
     "collapsejs": "^0.1.6",
     "gridstack": "^9.5.1",
     "interactjs": "^1.10.27",
-    "nanoid": "^5.1.5"
+    "nanoid": "^5.1.5",
+    "sortablejs": "^1.15.2"
   }
 }
