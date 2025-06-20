@@ -87,7 +87,7 @@ export function create(data = {}) {
 
   addBtn.addEventListener("click", () => {
     const el = createCard({ parent: id });
-    subgrid.addWidget(el, { x: 0, y: 0, w: 1, h: 1 });
+    subgrid.addWidget(el, { w: 1, h: 1, autoPosition: true });
   });
 
   delBtn.addEventListener("click", () => {
@@ -112,7 +112,7 @@ export function create(data = {}) {
         const child = Store.data.items[cid];
         if (!child) return;
         const el = createCard(child);
-        subgrid.addWidget(el, { x: 0, y: 0, w: 1, h: 1 });
+        subgrid.addWidget(el, { w: 1, h: 1, autoPosition: true });
       });
     }
   }
