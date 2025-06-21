@@ -33,6 +33,10 @@ body {
   /* add spacing so items aren't flush against the viewport */
   padding-top: 1.5rem;
   padding-bottom: 2.5rem;
+  --gs-item-margin-top: 10px;
+  --gs-item-margin-bottom: 10px;
+  --gs-item-margin-left: 0px;
+  --gs-item-margin-right: 0px;
 }
 
 #fab button {
