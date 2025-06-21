@@ -10,6 +10,7 @@ export function create(data = {}) {
     children: data.children || [],
     layout: data.layout || [],
     collapsed: data.collapsed || false,
+    expandedH: data.expandedH,
     id: data.id,
     parent: data.parent || "root",
   };
@@ -23,6 +24,7 @@ export function create(data = {}) {
     <div class="grid-stack-item-content container">
       <div class="container-header">
         <button class="toggle" aria-label="${t("toggle")}">▾</button>
+        <span class="lock-indicator" style="display:none">🔒</span>
         <h6 contenteditable="true"></h6>
         <button class="add-card" aria-label="${t("addCard")}">+</button>
         <button class="delete" aria-label="${t("delete")}">🗑️</button>
@@ -36,6 +38,7 @@ export function create(data = {}) {
   const content = wrapper.firstElementChild;
   const titleEl = content.querySelector("h6");
   const toggleBtn = content.querySelector("button.toggle");
+  const lockEl = content.querySelector(".lock-indicator");
   const addBtn = content.querySelector("button.add-card");
   const delBtn = content.querySelector("button.delete");
   const body = content.querySelector(".container-body");
@@ -67,15 +70,37 @@ export function create(data = {}) {
       layout: item.layout,
       children: item.children,
       collapsed: item.collapsed,
+      expandedH: item.expandedH,
       title: item.title,
     });
   }
 
+  function applyCollapsed(flag) {
+    const g = wrapper.closest(".grid-stack")?.gridstack;
+    if (!g) return;
+    const cell = g.getCellHeight(true);
+    const targetRows = Math.max(1, Math.round(120 / cell));
+    if (flag) {
+      item.expandedH = wrapper.gridstackNode?.h || item.expandedH || 4;
+      g.update(wrapper, { h: targetRows });
+      wrapper.style.height = "120px";
+      body.style.display = "none";
+      toggleBtn.textContent = "▸";
+      lockEl.style.display = "inline";
+    } else {
+      const h = item.expandedH || wrapper.gridstackNode?.h || 4;
+      g.update(wrapper, { h });
+      wrapper.style.height = "";
+      body.style.display = "";
+      toggleBtn.textContent = "▾";
+      lockEl.style.display = "none";
+    }
+    save();
+  }
+
   toggleBtn.addEventListener("click", () => {
     item.collapsed = !item.collapsed;
-    body.style.display = item.collapsed ? "none" : "";
-    toggleBtn.textContent = item.collapsed ? "▸" : "▾";
-    save();
+    applyCollapsed(item.collapsed);
   });
 
   addBtn.addEventListener("click", () => {
@@ -109,8 +134,8 @@ export function create(data = {}) {
   }
 
   if (item.collapsed) {
-    body.style.display = "none";
-    toggleBtn.textContent = "▸";
+    // apply collapsed state after element is added to the grid
+    setTimeout(() => applyCollapsed(true));
   }
 
   return { el: wrapper };
