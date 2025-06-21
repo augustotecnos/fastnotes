@@ -141,20 +141,21 @@ function addCard(data = {}, g = grid, parent = "root") {
 
 function addContainer(data = {}) {
   const cols = grid.opts.column;
-  const added = createContainer({ width: cols });
+  if (!data.width) data.width = cols;
+  const added = createContainer(data);
   const opts = {
     x: data.x ?? 0,
     y: data.y ?? grid.getRow(),
-    w: cols,
+    w: data.w ?? data.width,
     h: data.h ?? 4,
-    minW: cols,
-    maxW: cols,
+    minW: data.width,
+    maxW: data.width,
     resizable: { handles: "s" },
   };
   grid.addWidget(added.el, opts);
   const id = added.el.getAttribute("gs-id");
   const item = Store.data.items[id];
-  if (item) item.width = cols;
+  if (item) item.width = data.width;
   Store.save();
   saveLayout();
 }
