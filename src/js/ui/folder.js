@@ -35,7 +35,7 @@ export function create(data = {}) {
       <div class="folder-header">
         <button class="folder-back" aria-label="Back">\u2190</button>
         <h6 class="folder-title" contenteditable="true"></h6>
-        <button class="folder-add" aria-label="${t('addCard')}">+</button>
+        <button class="folder-add" aria-label="${t('addCard')}">➕</button>
         <textarea class="folder-desc" rows="2"></textarea>
       </div>
       <div class="grid-stack folder-grid"></div>
