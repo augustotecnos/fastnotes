@@ -234,6 +234,19 @@ body {
   justify-content: center;
   font-size: 2rem;
 }
+.folder-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.25rem;
+}
+.folder-card h6 {
+  margin: 0;
+  font-size: 0.9rem;
+  word-break: break-word;
+}
 .folder-header {
   display: flex;
   align-items: center;

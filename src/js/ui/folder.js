@@ -15,8 +15,16 @@ export function create(data = {}) {
   const id = Store.upsert(item);
   const wrapper = document.createElement('div');
   wrapper.setAttribute('gs-id', id);
-  wrapper.innerHTML = '<div class="grid-stack-item-content folder-icon">\ud83d\udcc1</div>';
-  const icon = wrapper.firstElementChild;
+  wrapper.innerHTML = `
+    <div class="grid-stack-item-content folder-card" tabindex="0" role="listitem" aria-label="Folder">
+      <div class="folder-icon">\ud83d\udcc1</div>
+      <h6 class="folder-name"></h6>
+    </div>
+  `;
+  const content = wrapper.firstElementChild;
+  const icon = content.querySelector('.folder-icon');
+  const nameEl = content.querySelector('.folder-name');
+  nameEl.textContent = item.title;
 
   icon.addEventListener('click', openFolder);
 
@@ -42,6 +50,7 @@ export function create(data = {}) {
     descEl.value = item.desc;
     titleEl.addEventListener('input', () => {
       item.title = titleEl.textContent;
+      nameEl.textContent = item.title;
       Store.patch(id, { title: item.title });
     });
     descEl.addEventListener('input', () => {
