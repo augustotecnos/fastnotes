@@ -18,6 +18,7 @@ export function create(data = {}) {
   const wrapper = document.createElement("div");
   wrapper.setAttribute("gs-id", id);
   wrapper.dataset.parent = item.parent;
+  wrapper.dataset.type = "container";
   wrapper.innerHTML = `
     <div class="grid-stack-item-content container">
       <div class="container-header">
@@ -49,7 +50,7 @@ export function create(data = {}) {
   const subgrid = GridStack.init(
     {
       margin: 4,
-      column: 1,
+      column: 3,
       float: false,
       resizable: { handles: "e, se, s, w" },
       acceptWidgets: true,
