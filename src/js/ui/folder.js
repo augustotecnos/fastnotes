@@ -1,6 +1,7 @@
 import { GridStack } from 'gridstack';
 import * as Store from '../store.js';
 import { create as createCard } from './card.js';
+import { t } from '../i18n.js';
 
 export function create(data = {}) {
   const item = {
@@ -27,6 +28,7 @@ export function create(data = {}) {
       <div class="folder-header">
         <button class="folder-back" aria-label="Back">\u2190</button>
         <h6 class="folder-title" contenteditable="true"></h6>
+        <button class="folder-add" aria-label="${t('addCard')}">+</button>
         <textarea class="folder-desc" rows="2"></textarea>
       </div>
       <div class="grid-stack folder-grid"></div>
@@ -34,6 +36,7 @@ export function create(data = {}) {
     document.body.appendChild(overlay);
     const titleEl = overlay.querySelector('.folder-title');
     const descEl = overlay.querySelector('.folder-desc');
+    const addBtn = overlay.querySelector('.folder-add');
     const gridEl = overlay.querySelector('.folder-grid');
     titleEl.textContent = item.title;
     descEl.value = item.desc;
@@ -48,6 +51,12 @@ export function create(data = {}) {
     const childGrid = GridStack.init({ margin: 5, column: 12, float: false, resizable:{ handles:'e, se, s, w' }, acceptWidgets: true, dragOut: true }, gridEl);
     if (!childGrid) return;
 
+    function save() {
+      item.layout = childGrid.save();
+      item.children = item.layout.map(c => c.id);
+      Store.patch(id, { layout: item.layout, children: item.children, title: item.title, desc: item.desc });
+    }
+
     if (item.layout && item.layout.length) {
       item.layout.forEach(opts => {
         const childItem = Store.data.items[opts.id];
@@ -60,13 +69,17 @@ export function create(data = {}) {
       });
     }
 
-    childGrid.on('change', () => {
-      item.layout = childGrid.save();
-      Store.upsert(item);
+    childGrid.on('change', save);
+
+    addBtn.addEventListener('click', () => {
+      const el = createCard({ parent: id });
+      childGrid.addWidget(el, { w: 3, h: 2, autoPosition: true });
+      save();
     });
 
     function close() {
       document.removeEventListener('keydown', onKey);
+      save();
       childGrid.destroy();
       overlay.remove();
     }
