@@ -220,7 +220,7 @@ async function restore() {
       let added;
       if (data.type === "container") {
         added = createContainer(data);
-        grid.addWidget(added.el, opts);
+        grid.addWidget(added.el, { ...opts, resizable: { handles: "s" } });
       } else if (data.type === "folder") {
         const el = createFolder(data);
         grid.addWidget(el, opts);
