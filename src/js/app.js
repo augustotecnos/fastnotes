@@ -119,9 +119,16 @@ function addCard(data = { x: 0, y: 0, w: 3, h: 2 }, g = grid, parent = "root") {
   if (g === grid) saveLayout();
 }
 
-function addContainer(data = { x: 0, y: 0, w: 6, h: 4 }) {
+function addContainer(data = { x: 0, y: 0, h: 4 }) {
+  const cols = grid.opts.column;
   const added = createContainer({});
-  grid.addWidget(added.el, data);
+  grid.addWidget(added.el, {
+    x: data.x ?? 0,
+    y: data.y ?? 0,
+    w: cols,
+    h: data.h ?? 4,
+    resizable: { handles: "s" },
+  });
   saveLayout();
 }
 
