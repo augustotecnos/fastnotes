@@ -8,6 +8,9 @@ export const PT = {
   toggle: "Alternar",
   addCard: "Adicionar card",
   delete: "Excluir",
+  trash: "Lixeira",
+  restore: "Restaurar",
+  close: "Fechar",
   selectContainer: "Escolha o container (id)",
 };
 
@@ -21,6 +24,9 @@ export const EN = {
   toggle: "Toggle",
   addCard: "Add card",
   delete: "Delete",
+  trash: "Trash",
+  restore: "Restore",
+  close: "Close",
   selectContainer: "Choose container (id)",
 };
 

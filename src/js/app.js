@@ -97,6 +97,7 @@ document
     await Store.importJSON(e.target.files[0]);
     location.reload();
   });
+document.getElementById("btn-trash")?.addEventListener("click", openTrash);
 
 const authBtn = document.getElementById("auth-btn");
 authBtn.addEventListener("click", async () => {
@@ -167,6 +168,52 @@ function addFolder(data = {}) {
   saveLayout();
 }
 
+function openTrash() {
+  openSidebar(false);
+  const overlay = document.createElement("div");
+  overlay.className = "trash-overlay";
+  overlay.innerHTML = `
+    <div class="trash-box">
+      <h3>${t("trash")}</h3>
+      <ul class="trash-list"></ul>
+      <button class="trash-close">${t("close")}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  const listEl = overlay.querySelector(".trash-list");
+  const closeBtn = overlay.querySelector(".trash-close");
+
+  Object.values(Store.data.trash).forEach((item) => {
+    const li = document.createElement("li");
+    li.className = "trash-item";
+    li.textContent = item.title || item.id;
+    const restoreBtn = document.createElement("button");
+    restoreBtn.textContent = t("restore");
+    const delBtn = document.createElement("button");
+    delBtn.textContent = t("delete");
+    li.appendChild(restoreBtn);
+    li.appendChild(delBtn);
+    listEl.appendChild(li);
+
+    restoreBtn.addEventListener("click", () => {
+      const restored = Store.restore(item.id);
+      if (restored) {
+        if (restored.type === "card") addCard(restored);
+        else if (restored.type === "container") addContainer(restored);
+        else if (restored.type === "folder") addFolder(restored);
+        li.remove();
+        saveLayout();
+      }
+    });
+
+    delBtn.addEventListener("click", () => {
+      Store.remove(item.id);
+      li.remove();
+    });
+  });
+
+  closeBtn.addEventListener("click", () => overlay.remove());
+}
+
 function updateColumns() {
   const width = window.innerWidth;
   let cols = 12;
@@ -174,14 +221,12 @@ function updateColumns() {
   else if (width < 1024) cols = 6;
   if (grid.opts.column !== cols) {
     grid.column(cols);
-    document
-      .querySelectorAll('[data-type="container"]')
-      .forEach((el) => {
-        grid.update(el, { w: cols, minW: cols, maxW: cols });
-        const id = el.getAttribute('gs-id');
-        const item = Store.data.items[id];
-        if (item) item.width = cols;
-      });
+    document.querySelectorAll('[data-type="container"]').forEach((el) => {
+      grid.update(el, { w: cols, minW: cols, maxW: cols });
+      const id = el.getAttribute("gs-id");
+      const item = Store.data.items[id];
+      if (item) item.width = cols;
+    });
     Store.save();
   }
 }
