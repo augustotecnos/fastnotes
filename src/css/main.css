@@ -234,6 +234,11 @@ body {
   justify-content: center;
   font-size: 2rem;
 }
+.folder-icon .lock-icon {
+  display: none;
+  font-size: 1rem;
+  margin-left: 4px;
+}
 .folder-card {
   display: flex;
   flex-direction: column;
@@ -300,6 +305,40 @@ body {
 .folder-grid::-webkit-scrollbar-thumb {
   background: #007bff;
   border-radius: 4px;
+}
+
+.password-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.password-box {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.password-box input {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.password-box button {
+  align-self: flex-end;
+  padding: 0.25rem 0.75rem;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 #auth-btn {
