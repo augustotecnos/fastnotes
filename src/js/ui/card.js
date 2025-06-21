@@ -71,7 +71,7 @@ export function create(data = {}) {
     if (g) g.removeWidget(wrapper);
     else wrapper.remove();
     wrapper.dispatchEvent(new CustomEvent("removed", { bubbles: true }));
-    Store.remove(id);
+    Store.trash(id);
   });
 
   function hexToRgb(hex) {

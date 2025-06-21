@@ -122,7 +122,7 @@ export function create(data = {}) {
   delBtn.addEventListener("click", () => {
     const g = wrapper.closest(".grid-stack")?.gridstack;
     if (g) g.removeWidget(wrapper);
-    Store.remove(id);
+    Store.trash(id);
   });
 
   subgrid.on("change", save);
