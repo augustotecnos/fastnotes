@@ -112,7 +112,7 @@ class Container {
 
   updateColumns() {
     if (this.bodyEl.style.display === "none") return;
-    const width = this.subEl.clientWidth;
+    const width = this.wrapper.offsetWidth;
     let cols = Math.max(1, Math.floor(width / MIN_WIDTH));
     if (this.subgrid.opts.column !== cols) this.subgrid.column(cols);
     const parentGrid = this.wrapper.closest(".grid-stack")?.gridstack;
