@@ -268,6 +268,8 @@ async function start() {
     }
   }
   await restore();
+  // ensure containers span the full grid width after restoring layout
+  updateColumns();
 }
 
 start();
