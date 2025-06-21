@@ -27,7 +27,7 @@ export function create(data = {}) {
         <button class="toggle" aria-label="${t("toggle")}">▾</button>
         <span class="lock-indicator" style="display:none">🔒</span>
         <h6 contenteditable="true"></h6>
-        <button class="add-card" aria-label="${t("addCard")}">+</button>
+        <button class="add-card" aria-label="${t("addCard")}">➕</button>
         <button class="delete" aria-label="${t("delete")}">🗑️</button>
       </div>
       <div class="container-body">
