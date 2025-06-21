@@ -121,7 +121,7 @@ function addCard(data = { x: 0, y: 0, w: 3, h: 2 }, g = grid, parent = "root") {
 
 function addContainer(data = { x: 0, y: 0, h: 4 }) {
   const cols = grid.opts.column;
-  const added = createContainer({});
+  const added = createContainer({ width: cols });
   grid.addWidget(added.el, {
     x: data.x ?? 0,
     y: data.y ?? 0,
@@ -131,6 +131,10 @@ function addContainer(data = { x: 0, y: 0, h: 4 }) {
     maxW: cols,
     resizable: { handles: "s" },
   });
+  const id = added.el.getAttribute("gs-id");
+  const item = Store.data.items[id];
+  if (item) item.width = cols;
+  Store.save();
   saveLayout();
 }
 
@@ -151,7 +155,11 @@ function updateColumns() {
       .querySelectorAll('[data-type="container"]')
       .forEach((el) => {
         grid.update(el, { w: cols, minW: cols, maxW: cols });
+        const id = el.getAttribute('gs-id');
+        const item = Store.data.items[id];
+        if (item) item.width = cols;
       });
+    Store.save();
   }
 }
 window.addEventListener("resize", updateColumns);
@@ -229,12 +237,18 @@ async function restore() {
       let added;
       if (data.type === "container") {
         added = createContainer(data);
+        const width = data.width || opts.w;
         grid.addWidget(added.el, {
           ...opts,
-          minW: opts.w,
-          maxW: opts.w,
+          w: width,
+          minW: width,
+          maxW: width,
           resizable: { handles: "s" },
         });
+        if (data.width !== width) {
+          data.width = width;
+          Store.patch(data.id, { width });
+        }
       } else if (data.type === "folder") {
         const el = createFolder(data);
         grid.addWidget(el, opts);
