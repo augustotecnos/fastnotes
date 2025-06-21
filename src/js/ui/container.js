@@ -54,8 +54,8 @@ export function create(data = {}) {
 
   const subgrid = GridStack.init(
     {
-      // match root grid spacing for consistency
-      margin: 8,
+      // use the same 10px gap as the main grid
+      margin: 10,
       column: "auto",
       float: false,
       resizable: { handles: "e, se, s, w" },
