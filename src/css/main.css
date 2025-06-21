@@ -31,8 +31,8 @@ body {
 #grid {
   position: relative;
   /* add spacing so items aren't flush against the viewport */
-  padding-top: 1rem;
-  padding-bottom: 2rem;
+  padding-top: 1.5rem;
+  padding-bottom: 2.5rem;
 }
 
 #fab button {
