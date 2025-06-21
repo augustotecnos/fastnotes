@@ -79,18 +79,19 @@ export function create(data = {}) {
   function applyCollapsed(flag) {
     const g = wrapper.closest(".grid-stack")?.gridstack;
     if (!g) return;
+    const cols = g.opts.column;
     const cell = g.getCellHeight(true);
     const targetRows = Math.max(1, Math.round(120 / cell));
     if (flag) {
       item.expandedH = wrapper.gridstackNode?.h || item.expandedH || 4;
-      g.update(wrapper, { h: targetRows });
+      g.update(wrapper, { h: targetRows, w: cols, minW: cols, maxW: cols });
       wrapper.style.height = "120px";
       body.style.display = "none";
       toggleBtn.textContent = "▸";
       lockEl.style.display = "inline";
     } else {
       const h = item.expandedH || wrapper.gridstackNode?.h || 4;
-      g.update(wrapper, { h });
+      g.update(wrapper, { h, w: cols, minW: cols, maxW: cols });
       wrapper.style.height = "";
       body.style.display = "";
       toggleBtn.textContent = "▾";
