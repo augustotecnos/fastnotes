@@ -114,24 +114,28 @@ function toggleMenu(force) {
   if (open) fabCard.focus();
 }
 
-function addCard(data = { x: 0, y: 0, w: 3, h: 2 }, g = grid, parent = "root") {
+function addCard(data = {}, g = grid, parent = "root") {
   const el = createCard({ parent });
-  g.addWidget(el, data);
+  const opts = { w: 3, h: 2, ...data };
+  if (opts.y === undefined) opts.y = g.getRow();
+  if (opts.x === undefined) opts.x = 0;
+  g.addWidget(el, opts);
   if (g === grid) saveLayout();
 }
 
-function addContainer(data = { x: 0, y: 0, h: 4 }) {
+function addContainer(data = {}) {
   const cols = grid.opts.column;
   const added = createContainer({ width: cols });
-  grid.addWidget(added.el, {
+  const opts = {
     x: data.x ?? 0,
-    y: data.y ?? 0,
+    y: data.y ?? grid.getRow(),
     w: cols,
     h: data.h ?? 4,
     minW: cols,
     maxW: cols,
     resizable: { handles: "s" },
-  });
+  };
+  grid.addWidget(added.el, opts);
   const id = added.el.getAttribute("gs-id");
   const item = Store.data.items[id];
   if (item) item.width = cols;
@@ -139,9 +143,12 @@ function addContainer(data = { x: 0, y: 0, h: 4 }) {
   saveLayout();
 }
 
-function addFolder(data = { x: 0, y: 0, w: 3, h: 3 }) {
+function addFolder(data = {}) {
   const el = createFolder({});
-  grid.addWidget(el, data);
+  const opts = { w: 3, h: 3, ...data };
+  if (opts.y === undefined) opts.y = grid.getRow();
+  if (opts.x === undefined) opts.x = 0;
+  grid.addWidget(el, opts);
   saveLayout();
 }
 
