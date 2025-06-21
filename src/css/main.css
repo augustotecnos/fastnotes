@@ -12,15 +12,51 @@ body {
   z-index: 200;
 }
 
-#menu {
+#sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 260px;
+  max-width: 80%;
+  background: #fff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  transform: translateX(-100%);
+  transition: transform 0.3s;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+#sidebar.open {
+  transform: translateX(0);
+}
+#sidebar button {
+  border: none;
+  background: #eee;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+  z-index: 250;
+}
+#sidebar-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+#menu-toggle {
   position: fixed;
   left: 1rem;
   top: 1rem;
-  display: flex;
-  gap: 0.5rem;
-  z-index: 200;
-}
-#menu button {
+  z-index: 310;
   border: none;
   background: #eee;
   padding: 0.25rem 0.5rem;
@@ -244,15 +280,12 @@ body {
 }
 
 #auth-btn {
-  position: fixed;
-  right: 2rem;
-  top: 2rem;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
   background: #28a745;
   color: #fff;
-  z-index: 200;
+  cursor: pointer;
 }
 
 @media (prefers-color-scheme: dark) {
