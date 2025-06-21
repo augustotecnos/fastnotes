@@ -32,8 +32,8 @@ function attachGridEvents(g) {
 
 const grid = GridStack.init(
   {
-    // standard gap between widgets as in the GridStack demo
-    margin: 10,
+    // vertical gap between widgets (horizontal spacing handled by CSS)
+    margin: "10px 0",
     column: 12,
     float: false,
     resizable: { handles: "e, se, s, w" },
