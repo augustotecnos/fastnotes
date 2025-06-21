@@ -127,6 +127,8 @@ function addContainer(data = { x: 0, y: 0, h: 4 }) {
     y: data.y ?? 0,
     w: cols,
     h: data.h ?? 4,
+    minW: cols,
+    maxW: cols,
     resizable: { handles: "s" },
   });
   saveLayout();
@@ -143,7 +145,14 @@ function updateColumns() {
   let cols = 12;
   if (width < 600) cols = 3;
   else if (width < 1024) cols = 6;
-  if (grid.opts.column !== cols) grid.column(cols);
+  if (grid.opts.column !== cols) {
+    grid.column(cols);
+    document
+      .querySelectorAll('[data-type="container"]')
+      .forEach((el) => {
+        grid.update(el, { w: cols, minW: cols, maxW: cols });
+      });
+  }
 }
 window.addEventListener("resize", updateColumns);
 updateColumns();
@@ -220,7 +229,12 @@ async function restore() {
       let added;
       if (data.type === "container") {
         added = createContainer(data);
-        grid.addWidget(added.el, { ...opts, resizable: { handles: "s" } });
+        grid.addWidget(added.el, {
+          ...opts,
+          minW: opts.w,
+          maxW: opts.w,
+          resizable: { handles: "s" },
+        });
       } else if (data.type === "folder") {
         const el = createFolder(data);
         grid.addWidget(el, opts);
