@@ -2,6 +2,7 @@ import { GridStack } from "gridstack";
 import * as Store from "../store.js";
 import { create as createCard } from "./card.js";
 import { t } from "../i18n.js";
+import { TITLE_MAX_LENGTH } from "../constants.js";
 
 export function create(data = {}) {
   const item = {
@@ -48,8 +49,10 @@ export function create(data = {}) {
 
   titleEl.textContent = item.title;
   titleEl.addEventListener("input", () => {
-    item.title = titleEl.textContent;
-    Store.patch(id, { title: item.title });
+    const text = titleEl.textContent.slice(0, TITLE_MAX_LENGTH);
+    if (text !== titleEl.textContent) titleEl.textContent = text;
+    item.title = text;
+    Store.patch(id, { title: text });
   });
 
   const subgrid = GridStack.init(
