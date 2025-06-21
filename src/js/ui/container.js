@@ -36,6 +36,7 @@ export function create(data = {}) {
   `;
 
   const content = wrapper.firstElementChild;
+  content.classList.add("fixed-width");
   const titleEl = content.querySelector("h6");
   const toggleBtn = content.querySelector("button.toggle");
   const lockEl = content.querySelector(".lock-indicator");
