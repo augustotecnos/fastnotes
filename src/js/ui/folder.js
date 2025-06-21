@@ -45,7 +45,7 @@ export function create(data = {}) {
       item.desc = descEl.value;
       Store.patch(id, { desc: item.desc });
     });
-    const childGrid = GridStack.init({ margin: 10, column: 12, float: false, resizable:{ handles:'e, se, s, w' }, acceptWidgets: true, dragOut: true }, gridEl);
+    const childGrid = GridStack.init({ margin: 5, column: 12, float: false, resizable:{ handles:'e, se, s, w' }, acceptWidgets: true, dragOut: true }, gridEl);
     if (!childGrid) return;
 
     if (item.layout && item.layout.length) {
