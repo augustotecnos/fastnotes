@@ -11,6 +11,7 @@ export function create(data = {}) {
     layout: data.layout || [],
     collapsed: data.collapsed || false,
     expandedH: data.expandedH,
+    width: data.width,
     id: data.id,
     parent: data.parent || "root",
   };
@@ -73,6 +74,7 @@ export function create(data = {}) {
       collapsed: item.collapsed,
       expandedH: item.expandedH,
       title: item.title,
+      width: item.width,
     });
   }
 
@@ -84,6 +86,7 @@ export function create(data = {}) {
     const targetRows = Math.max(1, Math.round(120 / cell));
     if (flag) {
       item.expandedH = wrapper.gridstackNode?.h || item.expandedH || 4;
+      item.width = cols;
       g.update(wrapper, { h: targetRows, w: cols, minW: cols, maxW: cols });
       wrapper.style.height = "120px";
       body.style.display = "none";
@@ -91,6 +94,7 @@ export function create(data = {}) {
       lockEl.style.display = "inline";
     } else {
       const h = item.expandedH || wrapper.gridstackNode?.h || 4;
+      item.width = cols;
       g.update(wrapper, { h, w: cols, minW: cols, maxW: cols });
       wrapper.style.height = "";
       body.style.display = "";
