@@ -22,11 +22,10 @@ export function create(data = {}) {
     </div>
   `;
   const content = wrapper.firstElementChild;
-  const icon = content.querySelector('.folder-icon');
   const nameEl = content.querySelector('.folder-name');
   nameEl.textContent = item.title;
 
-  icon.addEventListener('click', openFolder);
+  content.addEventListener('click', openFolder);
 
   function openFolder() {
     if (document.querySelector('.folder-overlay')) return;

@@ -241,6 +241,7 @@ body {
   justify-content: center;
   text-align: center;
   gap: 0.25rem;
+  cursor: pointer;
 }
 .folder-card h6 {
   margin: 0;
