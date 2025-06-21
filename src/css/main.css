@@ -150,6 +150,10 @@ body {
 }
 .card {
   position: relative;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6.7px);
+  -webkit-backdrop-filter: blur(6.7px);
 }
 .resize-handle {
   position: absolute;

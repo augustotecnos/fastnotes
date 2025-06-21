@@ -71,9 +71,31 @@ export function create(data = {}) {
     Store.remove(id);
   });
 
+  function hexToRgb(hex) {
+    hex = hex.replace("#", "");
+    if (hex.length === 3) {
+      hex = hex
+        .split("")
+        .map((c) => c + c)
+        .join("");
+    }
+    const num = parseInt(hex, 16);
+    return {
+      r: (num >> 16) & 255,
+      g: (num >> 8) & 255,
+      b: num & 255,
+    };
+  }
+
   function applyColor(value) {
     wrapper.dataset.color = value;
-    content.style.backgroundColor = value;
+    const { r, g, b } = hexToRgb(value);
+    content.style.background = `rgba(${r}, ${g}, ${b}, 0.34)`;
+    content.style.border = `1px solid rgba(${r}, ${g}, ${b}, 0.48)`;
+    content.style.borderRadius = "16px";
+    content.style.boxShadow = "0 4px 30px rgba(0, 0, 0, 0.1)";
+    content.style.backdropFilter = "blur(6.7px)";
+    content.style.webkitBackdropFilter = "blur(6.7px)";
   }
 
   function setLock(flag) {
