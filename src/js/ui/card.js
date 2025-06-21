@@ -1,5 +1,6 @@
 import * as Store from "../store.js";
 import { t } from "../i18n.js";
+import { TITLE_MAX_LENGTH } from "../constants.js";
 
 export function create(data = {}) {
   const item = {
@@ -44,7 +45,9 @@ export function create(data = {}) {
   setLock(item.locked);
 
   titleEl.addEventListener("input", () => {
-    Store.patch(id, { title: titleEl.textContent });
+    const text = titleEl.textContent.slice(0, TITLE_MAX_LENGTH);
+    if (text !== titleEl.textContent) titleEl.textContent = text;
+    Store.patch(id, { title: text });
   });
   textEl.addEventListener("input", () => {
     Store.patch(id, { text: textEl.value });
