@@ -8,8 +8,6 @@ export const PT = {
   toggle: "Alternar",
   addCard: "Adicionar card",
   delete: "Excluir",
-  moveOut: "Enviar para tela principal",
-  moveIn: "Mover para container",
   selectContainer: "Escolha o container (id)",
 };
 
@@ -23,8 +21,6 @@ export const EN = {
   toggle: "Toggle",
   addCard: "Add card",
   delete: "Delete",
-  moveOut: "Move out",
-  moveIn: "Move into container",
   selectContainer: "Choose container (id)",
 };
 
