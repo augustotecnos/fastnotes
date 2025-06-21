@@ -51,6 +51,12 @@ const fabMain = document.getElementById("fab-main");
 const fabCard = document.getElementById("fab-card");
 const fabContainerBtn = document.getElementById("fab-container");
 const fabFolderBtn = document.getElementById("fab-folder");
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.getElementById("sidebar-overlay");
+const menuToggle = document.getElementById("menu-toggle");
+
+menuToggle.addEventListener("click", () => openSidebar(true));
+sidebarOverlay.addEventListener("click", () => openSidebar(false));
 
 fabMain.addEventListener("click", toggleMenu);
 fabCard.addEventListener("click", () => {
@@ -66,10 +72,14 @@ fabFolderBtn.addEventListener("click", () => {
   toggleMenu(false);
 });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") toggleMenu(false);
+  if (e.key === "Escape") {
+    toggleMenu(false);
+    openSidebar(false);
+  }
 });
 
 toggleMenu(false);
+openSidebar(false);
 
 document.getElementById("fab-add")?.addEventListener("click", addCard);
 document
@@ -112,6 +122,11 @@ function toggleMenu(force) {
     (btn) => (btn.disabled = !open),
   );
   if (open) fabCard.focus();
+}
+
+function openSidebar(open = true) {
+  sidebar.classList.toggle("open", open);
+  sidebarOverlay.classList.toggle("show", open);
 }
 
 function addCard(data = {}, g = grid, parent = "root") {
