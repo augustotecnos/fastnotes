@@ -50,7 +50,7 @@ export function create(data = {}) {
   const subgrid = GridStack.init(
     {
       margin: 4,
-      column: 3,
+      column: "auto",
       float: false,
       resizable: { handles: "e, se, s, w" },
       acceptWidgets: true,
