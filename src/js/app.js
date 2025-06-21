@@ -32,8 +32,8 @@ function attachGridEvents(g) {
 
 const grid = GridStack.init(
   {
-    // increase margin to provide more vertical spacing between items
-    margin: 8,
+    // adjust vertical spacing: taller rows, same horizontal gap
+    margin: "12px 8px",
     column: 12,
     float: false,
     resizable: { handles: "e, se, s, w" },
