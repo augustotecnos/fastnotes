@@ -3,6 +3,10 @@ body {
   font-family: sans-serif;
 }
 
+h2 {
+  font-family: MD Primer Bold, Rubik, Lato, Lucida Grande, Lucida Sans Unicode, Tahoma, Sans-Serif;
+}
+
 #fab {
   position: fixed;
   right: 2rem;
@@ -21,14 +25,25 @@ body {
   max-width: 80%;
   background: #fff;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-  padding: 1rem;
+  padding: 3rem;
   transform: translateX(-100%);
   transition: transform 0.3s;
   z-index: 300;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
+
+#sidebar h2 {
+  color: azure;
+}
+
+
 #sidebar.open {
   transform: translateX(0);
 }
@@ -38,6 +53,9 @@ body {
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 1rem;
+  font-weight: bolder;
+  color: #1e1e1e;
 }
 
 .trash-overlay {
@@ -48,6 +66,7 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+ 
 }
 
 .trash-box {
@@ -79,6 +98,57 @@ body {
 .trash-item button {
   margin-left: 0.25rem;
 }
+
+
+.trash-close{
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(34px);
+  -webkit-backdrop-filter: blur(34px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 60px 30px rgba(255, 255, 255, 3);
+  position: relative;
+  overflow: hidden;
+}
+
+
+.trash-close::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+}
+
+.trash-close::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
+}
+
+.trash-close:hover{
+  
+}
+
 #sidebar-overlay {
   position: fixed;
   inset: 0;
