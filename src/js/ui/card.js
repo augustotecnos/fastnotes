@@ -1,6 +1,6 @@
 import * as Store from "../store.js";
 import { t } from "../i18n.js";
-import { TITLE_MAX_LENGTH } from "../constants.js";
+import { TITLE_MAX_LENGTH, TEXT_MAX_LENGTH } from "../constants.js";
 
 export function create(data = {}) {
   const item = {
@@ -49,7 +49,10 @@ export function create(data = {}) {
     if (text !== titleEl.textContent) titleEl.textContent = text;
     Store.patch(id, { title: text });
   });
+  textEl.setAttribute("maxlength", TEXT_MAX_LENGTH);
   textEl.addEventListener("input", () => {
+    if (textEl.value.length > TEXT_MAX_LENGTH)
+      textEl.value = textEl.value.slice(0, TEXT_MAX_LENGTH);
     Store.patch(id, { text: textEl.value });
   });
   function onColorChange() {
