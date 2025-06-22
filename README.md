@@ -80,6 +80,13 @@ Containers use a nested GridStack instance to manage their internal layout.
 4. Use **ESC** ou o botão de voltar para fechar o overlay.
 5. Reabra a pasta e confirme que título e descrição foram salvos.
 
+### Passo de teste 4.6
+
+1. Abra uma pasta existente.
+2. Clique no botão de lixeira para excluir a pasta.
+3. A pasta deve desaparecer do grid principal.
+4. Abra a **Lixeira** e confirme que a pasta está listada.
+
 ## Backup com JSON
 
 Na interface é possível exportar as notas atuais clicando em **Export**. Um arquivo

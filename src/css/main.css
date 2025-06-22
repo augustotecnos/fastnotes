@@ -312,6 +312,11 @@ body {
   border: none;
   cursor: pointer;
 }
+.folder-header .folder-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
 .folder-overlay {
   position: fixed;
   inset: 0;

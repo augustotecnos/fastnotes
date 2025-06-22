@@ -81,6 +81,7 @@ export function create(data = {}) {
         <h6 class="folder-title" contenteditable="true"></h6>
         <button class="folder-pass" aria-label="Password">${item.password ? "🔒" : "🔓"}</button>
         <button class="folder-add" aria-label="${t("addCard")}">➕</button>
+        <button class="folder-delete" aria-label="${t("delete")}">🗑️</button>
         <textarea class="folder-desc" rows="2"></textarea>
       </div>
       <div class="grid-stack folder-grid"></div>
@@ -90,6 +91,7 @@ export function create(data = {}) {
     const descEl = overlay.querySelector(".folder-desc");
     const addBtn = overlay.querySelector(".folder-add");
     const passBtn = overlay.querySelector(".folder-pass");
+    const delBtn = overlay.querySelector(".folder-delete");
     const gridEl = overlay.querySelector(".folder-grid");
 
     passBtn.addEventListener("click", () => {
@@ -163,6 +165,15 @@ export function create(data = {}) {
       const el = createCard({ parent: id });
       childGrid.addWidget(el, { w: 3, h: 2, autoPosition: true });
       save();
+    });
+
+    delBtn.addEventListener("click", () => {
+      document.removeEventListener("keydown", onKey);
+      childGrid.destroy();
+      overlay.remove();
+      const g = wrapper.closest(".grid-stack")?.gridstack;
+      if (g) g.removeWidget(wrapper);
+      Store.trash(id);
     });
 
     function close() {
