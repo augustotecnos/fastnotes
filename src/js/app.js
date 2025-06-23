@@ -7,6 +7,7 @@ import { registerDriveSync } from "./drive/sync.js";
 import * as Auth from "./drive/auth.js";
 import * as Drive from "./drive/sync.js";
 import { t, getLanguage } from "./i18n.js";
+import { Workbox } from "workbox-window";
 
 let dragItem = null;
 
@@ -358,8 +359,12 @@ async function start() {
 start();
 
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/service-worker.js");
+  const wb = new Workbox("/sw.js", { type: "module" });
+
+  wb.addEventListener("installed", ({ isUpdate }) => {
+    if (isUpdate)
+      console.log("Atualização disponível; recarregue para usar offline.");
   });
-  registerDriveSync();
+
+  wb.register().then(registerDriveSync);
 }
