@@ -10,6 +10,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         runtimeCaching: [
+          // ativos estáticos
           {
             urlPattern: ({ request }) => request.destination !== 'document',
             handler: 'CacheFirst',
@@ -18,6 +19,7 @@ export default defineConfig({
               expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 30 }
             }
           },
+          // Google Drive – network first
           {
             urlPattern: ({ url }) => url.origin.includes('googleapis.com'),
             handler: 'NetworkFirst',
@@ -27,6 +29,7 @@ export default defineConfig({
               expiration: { maxEntries: 10 }
             }
           },
+          // páginas
           {
             urlPattern: ({ request }) => request.destination === 'document',
             handler: 'StaleWhileRevalidate',
