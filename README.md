@@ -13,6 +13,17 @@ A simple note-taking demo powered by Vite.
 npm install
 ```
 
+## Configuration
+
+Copy `.env.example` to `.env` and add your Google OAuth client ID:
+
+```bash
+cp .env.example .env
+echo "VITE_GOOGLE_CLIENT_ID=your-client-id" >> .env
+```
+
+The `VITE_GOOGLE_CLIENT_ID` variable is required for the Drive backup feature.
+
 ## Development
 
 Start a local server with live reloading:
