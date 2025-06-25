@@ -1,4 +1,5 @@
-const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
+// Read Google OAuth client ID from Vite environment variables
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID';
 let token = localStorage.getItem('google_token');
 let tokenClientLoaded = false;
 let tokenClient;
