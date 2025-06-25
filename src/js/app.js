@@ -359,7 +359,7 @@ async function start() {
 start();
 
 if ("serviceWorker" in navigator) {
-  const wb = new Workbox("/sw.js", { type: "module" });
+  const wb = new Workbox("/sw.js");
 
   wb.addEventListener("installed", ({ isUpdate }) => {
     if (isUpdate)
